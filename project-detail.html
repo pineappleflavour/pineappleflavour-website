@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Swarm Optimiser | Project</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link 
+        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" 
+        rel="stylesheet">
+    <style>
+        .p-hero {
+            background-color: var(--accent-green);
+            padding: 120px 40px 60px;
+            color: #fff;
+        }
+
+        .p-header-top {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            margin-bottom: 40px;
+        }
+
+        .p-title {
+            font-size: clamp(60px, 12vw, 150px);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+        }
+
+        .p-info-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 80px 40px;
+            gap: 60px;
+            background-color: var(--bg-color);
+        }
+
+        .p-details-list h4 {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            margin-top: 24px;
+        }
+
+        .p-details-list p {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .p-intro-text {
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .p-full-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .p-media-grid {
+            padding: 40px;
+            display: grid;
+            gap: 40px;
+        }
+
+        .p-text-block {
+            max-width: 600px;
+            margin: 80px auto;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .p-text-block h3 {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="nav-pill">Home</a>
+            <a href="work.html" class="nav-pill active">Projects</a>
+            <a href="about.html" class="nav-pill">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="p-hero">
+            <div class="p-header-top"><a href="work.html">← Back to projects</a></div>
+            <h1 class="p-title">Particle Swarm<br>Optimiser</h1>
+        </section>
+
+        <section class="p-info-section">
+            <div class="p-details-list">
+                <h4>Client</h4>
+                <p>Spectral</p>
+                <h4>Date</h4>
+                <p>October 2024</p>
+                <h4>For</h4>
+                <p>Artificial Intelligence</p>
+            </div>
+            <div class="p-intro-text">
+                <p>Split Signal was developed for an online feature by Spectral Press, a digital-first news platform
+                    reporting on identity, technology, and society. The article—titled "The Fractured Self"—explored how
+                    social media filters, surveillance culture, and algorithmic profiling reshape the way individuals
+                    present themselves online. Our goal was to create a set of commissioned visuals that echoed this
+                    conceptual split across personal identity and public performance.</p>
+            </div>
+        </section>
+
+        <img src="assets/swarm-optimisation-full.jpg" alt="Swarm" class="p-full-img">
+
+        <section class="p-media-grid">
+            <div class="p-text-block">
+                <h3>01 / CONCEPTUAL DIRECTION</h3>
+                <p>We produced a series of abstract imagery that intentionally used a grainy texture and warped shapes
+                    to simulate a feeling of fragmented presence. Both contrast and saturation were adjusted to look
+                    slightly artificial—yet enticing, just like our digital personas—evoking the tension between the
+                    physical and the pixelated.</p>
+            </div>
+
+            <div class="p-text-block">
+                <h3>02 / SYMBOLIC VISUALS</h3>
+                <p>Working closely with the editorial team, we developed a symbolic language of rings and gradients to
+                    represent the constant friction between acting and observing. Shapes overlap, move, and blurred to
+                    imitate the experience of digital overlays and near-realtime feedback. This allowed for a visual
+                    rhythm that matched the article’s narrative flow—where visual overload mirrors cognitive dissonance.
+                </p>
+            </div>
+
+            <!-- Additional media and things can be added here. D3JS comes here. -->
+
+            <!-- <img src="assets/abstractGEN.jpg" alt="Concept 1" class="p-full-img">
+            <img src="assets/project1-sub2.jpg" alt="Concept 2" class="p-full-img"> -->
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="copyright">© 2025 | Pineappleflavour.com</div>
+            <nav class="footer-nav">
+                <a href="index.html">Home</a>
+                <span class="dot">•</span>
+                <a href="work.html">Work</a>
+                <span class="dot">•</span>
+                <a href="about.html">About</a>
+            </nav>
+            <div class="footer-name">Ikedi Jacobs</div>
+        </div>
+        <div class="footer-shapes">
+            <div class="shape yellow"></div>
+            <div class="shape blue"></div>
+            <div class="shape orange"></div>
+        </div>
+    </footer>
+    <script src="main.js"></script>
+</body>
+
+</html>

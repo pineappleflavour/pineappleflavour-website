@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Swarm Optimiser | Project</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link 
+        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" 
+        rel="stylesheet">
+    <style>
+        .p-hero {
+            background-color: var(--accent-green);
+            padding: 120px 40px 60px;
+            color: #fff;
+        }
+
+        .p-header-top {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            margin-bottom: 40px;
+        }
+
+        .p-title {
+            font-size: clamp(60px, 12vw, 150px);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+        }
+
+        .p-info-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 80px 40px;
+            gap: 60px;
+            background-color: var(--bg-color);
+        }
+
+        .p-details-list h4 {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            margin-top: 24px;
+        }
+
+        .p-details-list p {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .p-intro-text {
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .p-full-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .p-media-grid {
+            padding: 40px;
+            display: grid;
+            gap: 40px;
+        }
+
+        .p-text-block {
+            max-width: 600px;
+            margin: 80px auto;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .p-text-block h3 {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="nav-pill">Home</a>
+            <a href="work.html" class="nav-pill active">Projects</a>
+            <a href="about.html" class="nav-pill">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="p-hero">
+            <div class="p-header-top"><a href="work.html">← Back to projects</a></div>
+            <h1 class="p-title">Particle Swarm<br>Optimiser</h1>
+        </section>
+
+        <section class="p-info-section">
+            <div class="p-details-list">
+                <h4>Client</h4>
+                <p>Personal</p>
+                <h4>Date</h4>
+                <p>March 2026</p>
+                <h4>For</h4>
+                <p>Biologically Inspired Computing</p>
+            </div>
+            <div class="p-intro-text">
+                <p> Biologically inspired computing is taking over. From the neural networks that power LLMs to the way we solve complex 
+                    logistics, we are increasingly looking at nature to solve human problems.
+                </p>
+            </div>
+        </section>
+
+        <section class="p-media-grid">
+            <div class="p-text-block">
+                <h3>01 / What is Swarm Intelligence?</h3>
+                <p>At its core, swarm intelligence is about emergence: achieving complex, "intelligent" group behavior using very simple 
+                    underlying rules.
+                
+                    <h4>Key Properties of a Swarm:</h4>
+                    1. Greater than the sum of its parts: The swarm appears smarter than any individual member.<br>
+                    2. Lack of awareness: An individual (like a single fish or ant) is usually unaware of the "big picture" or the complex structure they are building.<br>
+                    3. Robustness: Because the behavior is distributed, the system doesn't fail if one individual does. If one fish is eaten, the school keeps rolling.<br>
+                    4. Stigmergy: This is the secret sauce. It's the "indirect sharing of information through changes in the environment—like ants leaving pheromone trails or humans editing Wikipedia.<br>
+                </p>
+            </div>
+
+            <div class="p-text-block">
+                <h3>02 / Two Powerhouse Algorithms</h3>
+                <p>There are two primary algorithms we use to turn these biological observations into math: Ant Colony Optimisation (ACO) and 
+                    Particle Swarm Optimisation (PSO).
+                
+                    <h4>1. Ant Colony Optimisation (ACO)</h4>
+                    Designed by Marco Dorigo in 1992, ACO is the go-to for combinatorial optimisation—finding the best order 
+                    for things (like the Traveling Salesman Problem).<br>
+                    How it works: It mimics how ants forage for food. <br>
+                    The Process: Ants explore paths randomly and leave "pheromones" behind.<br>
+                    The Shortcut: Shorter paths allow ants to travel back and forth faster, laying down more pheromones.<br>
+                    Result: Over time, the pheromones on the longer paths evaporate, and the swarm converges on the most efficient route.<br>
+
+                    <h4>2. Particle Swarm Optimisation (PSO)</h4>
+                    Invented in 1995, PSO is inspired by the "Boids" model of bird flocking. It treats the search for a solution like a swarm of particles flying 
+                    through a "fitness landscape". <br>
+                    The Rules of the Flight: <br>
+                    1. Separation: Don't crowd your neighbors.<br>
+                    2. Alignment: Move in the same direction of the group.<br>
+                    3. Cohesion: Move toward the center of the group.<br>
+
+                    The Math of Sucess: Each particle remembers its own Personal Best (Cognitive Component) and knows the Global Best of the swarm (Social component).
+                    The update equation: v[i] = w * v[i] + c1 * r1 * (pBest[i] - x[i]) + c2 * r2 * (gBest - x[i])<br>
+                    Where: <br>
+                    - v[i] is the velocity of particle i<br>
+                    - w is the inertia weight<br>
+                    - c1 and c2 are the cognitive and social coefficients<br>
+                    - r1 and r2 are random numbers between 0 and 1<br>
+                    - pBest[i] is the best position particle i has found<br>
+                    - gBest is the best position found by the entire swarm<br>
+                    Result: Particles "fly" through the solution space, influenced by their own experience and the success of their neighbors, 
+                    eventually converging on an optimal or near-optimal solution.
+                    
+                </p>
+            </div>
+
+            <img src="assets/swarm-optimisation-full.jpg" alt="Swarm" class="p-full-img">
+
+            <!-- <div class="p-text-block">
+                <h3>02 / SYMBOLIC VISUALS</h3>
+                <p>Working closely with the editorial team, we developed a symbolic language of rings and gradients to
+                    represent the constant friction between acting and observing. Shapes overlap, move, and blurred to
+                    imitate the experience of digital overlays and near-realtime feedback. This allowed for a visual
+                    rhythm that matched the article’s narrative flow—where visual overload mirrors cognitive dissonance.
+                </p>
+            </div> -->
+
+            <!-- Additional media and things can be added here. D3JS comes here. -->
+
+            <!-- <img src="assets/abstractGEN.jpg" alt="Concept 1" class="p-full-img">
+            <img src="assets/project1-sub2.jpg" alt="Concept 2" class="p-full-img"> -->
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="copyright">© 2025 | Pineappleflavour.com</div>
+            <nav class="footer-nav">
+                <a href="index.html">Home</a>
+                <span class="dot">•</span>
+                <a href="work.html">Work</a>
+                <span class="dot">•</span>
+                <a href="about.html">About</a>
+            </nav>
+            <div class="footer-name">Ikedi Jacobs</div>
+        </div>
+        <div class="footer-shapes">
+            <div class="shape yellow"></div>
+            <div class="shape blue"></div>
+            <div class="shape orange"></div>
+        </div>
+    </footer>
+    <script src="main.js"></script>
+</body>
+
+</html>
