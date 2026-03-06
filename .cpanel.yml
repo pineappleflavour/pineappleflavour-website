@@ -1,15 +1,4 @@
-name: Deploy to cPanel
-
-on:
-  push:
-    branches:
-      - main # or master, whatever your default branch is
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger cPanel Git Pull
-        run: |
-          curl -X POST "https://pineappleflavour.com/cgi-sys/gitautodeploy.pl" \
-          -H "Content-Type: application/json"
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/pineapp/public_html/
+    - /bin/cp -R * $DEPLOYPATH
