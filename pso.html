@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link 
-        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
         rel="stylesheet">
     <style>
         .p-hero {
@@ -111,7 +111,8 @@
                 <p>Biologically Inspired Computing</p>
             </div>
             <div class="p-intro-text">
-                <p> Biologically inspired computing is taking over. From the neural networks that power LLMs to the way we solve complex 
+                <p> Biologically inspired computing is taking over. From the neural networks that power LLMs to the way
+                    we solve complex
                     logistics, we are increasingly looking at nature to solve human problems.
                 </p>
             </div>
@@ -120,50 +121,59 @@
         <section class="p-media-grid">
             <div class="p-text-block">
                 <h3>01 / What is Swarm Intelligence?</h3>
-                <p>At its core, swarm intelligence is about emergence: achieving complex, "intelligent" group behavior using very simple 
+                <p>At its core, swarm intelligence is about emergence: achieving complex, "intelligent" group behavior
+                    using very simple
                     underlying rules.
-                
-                    <h4>Key Properties of a Swarm:</h4>
-                    1. Greater than the sum of its parts: The swarm appears smarter than any individual member.<br>
-                    2. Lack of awareness: An individual (like a single fish or ant) is usually unaware of the "big picture" or the complex structure they are building.<br>
-                    3. Robustness: Because the behavior is distributed, the system doesn't fail if one individual does. If one fish is eaten, the school keeps rolling.<br>
-                    4. Stigmergy: This is the secret sauce. It's the "indirect sharing of information through changes in the environment—like ants leaving pheromone trails or humans editing Wikipedia.<br>
+
+                <h4>Key Properties of a Swarm:</h4>
+                1. Greater than the sum of its parts: The swarm appears smarter than any individual member.<br>
+                2. Lack of awareness: An individual (like a single fish or ant) is usually unaware of the "big picture"
+                or the complex structure they are building.<br>
+                3. Robustness: Because the behavior is distributed, the system doesn't fail if one individual does. If
+                one fish is eaten, the school keeps rolling.<br>
+                4. Stigmergy: This is the secret sauce. It's the "indirect sharing of information through changes in the
+                environment—like ants leaving pheromone trails or humans editing Wikipedia.<br>
                 </p>
             </div>
 
             <div class="p-text-block">
                 <h3>02 / Two Powerhouse Algorithms</h3>
-                <p>There are two primary algorithms we use to turn these biological observations into math: Ant Colony Optimisation (ACO) and 
+                <p>There are two primary algorithms we use to turn these biological observations into math: Ant Colony
+                    Optimisation (ACO) and
                     Particle Swarm Optimisation (PSO).
-                
-                    <h4>1. Ant Colony Optimisation (ACO)</h4>
-                    Designed by Marco Dorigo in 1992, ACO is the go-to for combinatorial optimisation—finding the best order 
-                    for things (like the Traveling Salesman Problem).<br>
-                    How it works: It mimics how ants forage for food. <br>
-                    The Process: Ants explore paths randomly and leave "pheromones" behind.<br>
-                    The Shortcut: Shorter paths allow ants to travel back and forth faster, laying down more pheromones.<br>
-                    Result: Over time, the pheromones on the longer paths evaporate, and the swarm converges on the most efficient route.<br>
 
-                    <h4>2. Particle Swarm Optimisation (PSO)</h4>
-                    Invented in 1995, PSO is inspired by the "Boids" model of bird flocking. It treats the search for a solution like a swarm of particles flying 
-                    through a "fitness landscape". <br>
-                    The Rules of the Flight: <br>
-                    1. Separation: Don't crowd your neighbors.<br>
-                    2. Alignment: Move in the same direction of the group.<br>
-                    3. Cohesion: Move toward the center of the group.<br>
+                <h4>1. Ant Colony Optimisation (ACO)</h4>
+                Designed by Marco Dorigo in 1992, ACO is the go-to for combinatorial optimisation—finding the best order
+                for things (like the Traveling Salesman Problem).<br>
+                How it works: It mimics how ants forage for food. <br>
+                The Process: Ants explore paths randomly and leave "pheromones" behind.<br>
+                The Shortcut: Shorter paths allow ants to travel back and forth faster, laying down more pheromones.<br>
+                Result: Over time, the pheromones on the longer paths evaporate, and the swarm converges on the most
+                efficient route.<br>
 
-                    The Math of Sucess: Each particle remembers its own Personal Best (Cognitive Component) and knows the Global Best of the swarm (Social component).
-                    The update equation: v[i] = w * v[i] + c1 * r1 * (pBest[i] - x[i]) + c2 * r2 * (gBest - x[i])<br>
-                    Where: <br>
-                    - v[i] is the velocity of particle i<br>
-                    - w is the inertia weight<br>
-                    - c1 and c2 are the cognitive and social coefficients<br>
-                    - r1 and r2 are random numbers between 0 and 1<br>
-                    - pBest[i] is the best position particle i has found<br>
-                    - gBest is the best position found by the entire swarm<br>
-                    Result: Particles "fly" through the solution space, influenced by their own experience and the success of their neighbors, 
-                    eventually converging on an optimal or near-optimal solution.
-                    
+                <h4>2. Particle Swarm Optimisation (PSO)</h4>
+                Invented in 1995, PSO is inspired by the "Boids" model of bird flocking. It treats the search for a
+                solution like a swarm of particles flying
+                through a "fitness landscape". <br>
+                The Rules of the Flight: <br>
+                1. Separation: Don't crowd your neighbors.<br>
+                2. Alignment: Move in the same direction of the group.<br>
+                3. Cohesion: Move toward the center of the group.<br>
+
+                The Math of Sucess: Each particle remembers its own Personal Best (Cognitive Component) and knows the
+                Global Best of the swarm (Social component).
+                The update equation: v[i] = w * v[i] + c1 * r1 * (pBest[i] - x[i]) + c2 * r2 * (gBest - x[i])<br>
+                Where: <br>
+                - v[i] is the velocity of particle i<br>
+                - w is the inertia weight<br>
+                - c1 and c2 are the cognitive and social coefficients<br>
+                - r1 and r2 are random numbers between 0 and 1<br>
+                - pBest[i] is the best position particle i has found<br>
+                - gBest is the best position found by the entire swarm<br>
+                Result: Particles "fly" through the solution space, influenced by their own experience and the success
+                of their neighbors,
+                eventually converging on an optimal or near-optimal solution.
+
                 </p>
             </div>
 
@@ -182,6 +192,22 @@
 
             <!-- <img src="assets/abstractGEN.jpg" alt="Concept 1" class="p-full-img">
             <img src="assets/project1-sub2.jpg" alt="Concept 2" class="p-full-img"> -->
+        </section>
+        <section class="projects-list">
+            <div class="work-item">
+                <div class="work-visual">
+                    <img src="assets/abstractGEN.jpg" alt="AbstractGEN">
+                </div>
+                <div class="work-content">
+                    <div>
+                        <div class="work-meta">PROJECT 02 / GENERATIVE</div>
+                        <h2 class="work-item-title">AbstractGEN</h2>
+                        <p class="work-item-desc">A series of commissioned visuals that echoed this conceptual split
+                            across personal identity and public performance.</p>
+                    </div>
+                    <a href="#" class="view-link">View project →</a>
+                </div>
+            </div>
         </section>
     </main>
 
