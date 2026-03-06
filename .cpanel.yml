@@ -1,4 +1,4 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/pineapp/public_html/
+    - export DEPLOYPATH=/home/pineapp9/public_html/
     - /bin/cp -R * $DEPLOYPATH
