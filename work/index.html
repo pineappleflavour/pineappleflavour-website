@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | Pineappleflavour</title>
+    <link rel="icon" href="/assets/favicon.ico" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+        rel="stylesheet">
+    <style>
+        .work-hero {
+            background-color: #d1e4ff;
+            padding: 120px 40px 60px;
+        }
+
+        .work-title {
+            font-size: clamp(80px, 15vw, 250px);
+            font-weight: 900;
+            color: var(--accent-orange);
+            line-height: 0.8;
+            letter-spacing: -0.05em;
+        }
+
+        .work-title sup {
+            font-size: 0.3em;
+            vertical-align: super;
+            margin-left: 10px;
+        }
+
+        .projects-list {
+            padding: 0;
+            background-color: #fff;
+        }
+
+        .work-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid #eee;
+        }
+
+        .work-content {
+            padding: 80px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .work-meta {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 40px;
+        }
+
+        .work-item-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            line-height: 1.1;
+        }
+
+        .work-item-desc {
+            font-size: 18px;
+            color: #444;
+            max-width: 400px;
+            margin-bottom: 40px;
+        }
+
+        .view-link {
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        .work-visual {
+            background-color: #f0f0f0;
+            overflow: hidden;
+            aspect-ratio: 1/1;
+        }
+
+        .work-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .work-item:hover .work-visual img {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 900px) {
+            .work-item {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="page-projects">
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="nav-pill">Home</a>
+            <a href="/work/" class="nav-pill active">Projects</a>
+            <a href="/about/" class="nav-pill">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="work-hero">
+            <h1 class="work-title">Projects</h1>
+        </section>
+
+        <section class="projects-list">
+            <div class="work-item">
+                <div class="work-content">
+                    <div>
+                        <div class="work-meta">PROJECT 01 / OPTIMISERS</div>
+                        <h2 class="work-item-title">Particle Swarm Optimiser</h2>
+                        <p class="work-item-desc">At its core, swarm intelligence is about emergence: achieving complex,
+                            "intelligent" group behavior using very simple
+                            underlying rules.</p>
+                    </div>
+                    <a href="/pso/" class="view-link">View project →</a>
+                </div>
+                <div class="work-visual">
+                    <img src="/assets/swarm-optimisation-full.jpg" alt="Particle Swarm">
+                </div>
+            </div>
+
+            <div class="work-item">
+                <div class="work-visual">
+                    <img src="/assets/abstractGEN.jpg" alt="AbstractGEN">
+                </div>
+                <div class="work-content">
+                    <div>
+                        <div class="work-meta">PROJECT 02 / GENERATIVE</div>
+                        <h2 class="work-item-title">AbstractGEN</h2>
+                        <p class="work-item-desc">Investigation and evaluation of the performance of large language
+                            models for text summarization of scientific papers.</p>
+                    </div>
+                    <a href="#" class="view-link"> Coming soon... →</a>
+                </div>
+            </div>
+
+            <div class="work-item">
+                <div class="work-content">
+                    <div>
+                        <div class="work-meta">PROJECT 03 / MACHINE LEARNING</div>
+                        <h2 class="work-item-title">Skin Lesion Classification</h2>
+                        <p class="work-item-desc">Investigation and evaluation of the performance of large language
+                            models for text summarization of scientific papers.</p>
+                    </div>
+                    <a href="/skin-lesion/" class="view-link">View project →</a>
+                </div>
+                <div class="work-visual">
+                    <img src="/assets/skin_lesion.jpg" alt="Skin Lesion">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="copyright">© 2026 | Pineappleflavour.com</div>
+            <nav class="footer-nav">
+                <a href="/">Home</a>
+                <span class="dot">•</span>
+                <a href="/work/">Work</a>
+                <span class="dot">•</span>
+                <a href="/about/">About</a>
+            </nav>
+            <div class="footer-name">Ikedi Jacobs</div>
+        </div>
+        <div class="footer-shapes">
+            <div class="shape yellow"></div>
+            <div class="shape blue"></div>
+            <div class="shape orange"></div>
+        </div>
+    </footer>
+    <script src="/main.js"></script>
+</body>
+
+</html>

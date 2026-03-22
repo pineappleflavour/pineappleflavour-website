@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Pineappleflavour</title>
+    <link rel="icon" href="/assets/favicon.ico" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+        rel="stylesheet">
+    <style>
+        .hero-about {
+            background-color: var(--accent-brown);
+            padding: 120px 40px 60px;
+        }
+
+        .about-title {
+            font-size: clamp(80px, 20vw, 300px);
+            font-weight: 900;
+            color: #fff;
+            line-height: 0.8;
+            margin-bottom: 60px;
+            letter-spacing: -0.05em;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 80px 40px;
+            gap: 60px;
+            background-color: #fcfbf4;
+        }
+
+        .about-text {
+            font-size: 20px;
+            line-height: 1.4;
+            max-width: 600px;
+        }
+
+        .about-text p {
+            margin-bottom: 30px;
+        }
+
+        .list-section h3 {
+            font-size: 12px;
+            font-family: var(--font-mono);
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .list-section ul {
+            list-style: none;
+        }
+
+        .list-section li {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .experience-section {
+            padding: 120px 40px;
+            background-color: #fff;
+        }
+
+        .experience-title {
+            font-size: clamp(60px, 12vw, 150px);
+            font-weight: 900;
+            color: var(--accent-blue);
+            margin-bottom: 60px;
+            letter-spacing: -0.04em;
+        }
+
+        .exp-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .exp-header {
+            background-color: var(--accent-blue);
+            color: #fff;
+            padding: 15px 20px;
+            font-size: 10px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: left;
+        }
+
+        .exp-row {
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .exp-row td {
+            padding: 25px 20px;
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .exp-row td:last-child {
+            text-align: right;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body class="page-about">
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="nav-pill">Home</a>
+            <a href="/work/" class="nav-pill">Projects</a>
+            <a href="/about/" class="nav-pill active">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-about">
+            <h1 class="about-title">About</h1>
+        </section>
+
+        <section class="about-grid">
+            <div class="about-text">
+                <p style="text-align: justify;">Hi, I'm Ikedi Jacobs. am a distinction-holding MSc Data Science graduate from Heriot-Watt University, driven by a deep commitment to
+                    excellence and impact. Building on a first-class foundation in engineering, where I graduated as the Best Student in
+                    Mechatronics in 2019, I combine strong mathematical reasoning with software engineering discipline and practical machine
+                    learning expertise to solve complex, real-world problems.</p>
+                <p style="text-align: justify;">My experience spans deep learning, statistical modeling, big data systems, and data visualization, supported by hands-on
+                    proficiency in Python, SQL, JavaScript, and modern analytics tools. I have led exploratory data analysis initiatives,
+                    built intelligent machine learning systems including fraud detection and neural network models, and developed interactive
+                    data visualization platforms. My research interests sit at the intersection of AI, scientific modeling, and high-impact
+                    industry applications, as reflected in my <a href="https://ieeexplore.ieee.org/document/10630434" target="_blank" rel="noopener noreferrer">
+                    IEEE-published work </a> on intelligent systems.</p>
+                <p style="text-align: justify;">Excellence is not just a goal for me; it is a standard. I approach every project with intellectual curiosity, technical
+                    rigor, and a drive to produce work that is both functional and exceptional. Whether I am building scalable ML models,
+                    engineering data pipelines, or communicating insights through compelling visualizations, I am committed to delivering
+                    results that truly stand out.</p>
+            </div>
+            <div class="list-section">
+                <h3>Services</h3>
+                <ul>
+                    <li>Data Storytelling</li>
+                    <li>Business Intelligence</li>
+                    <li>Predictive Analysis</li>
+                    <li>Machine Learning</li>
+                    <li>Specialised AI Solutions</li>
+                </ul>
+            </div>
+            <div class="list-section">
+                <h3>Contact</h3>
+                <ul>
+                    <li><a href="mailto:ikediloh@gmail.com">email</a></li>
+                    <li><a href="https://www.linkedin.com/in/ikedijacobs/" target="_blank" rel="noopener noreferrer">linkedin</a></li>
+                    <li><a href="https://drive.google.com/file/d/1eZhBMq50lLnc_rq4S2wR_T3DE5IK6BEK/view?usp=sharing" target="_blank" rel="noopener noreferrer">resumé</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="experience-section">
+            <h2 class="experience-title">Experience</h2>
+            <table class="exp-table">
+                <thead>
+                    <tr>
+                        <th class="exp-header">Company</th>
+                        <th class="exp-header">Role</th>
+                        <th class="exp-header">Years</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="exp-row">
+                        <td>Freelance</td>
+                        <td>Data Scientist</td>
+                        <td>2025-present</td>
+                    </tr>
+                    <tr class="exp-row">
+                        <td>Montego Energy</td>
+                        <td>Data Scientist</td>
+                        <td>2020–2023</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="copyright">© 2025 | Pineappleflavour.com</div>
+            <nav class="footer-nav">
+                <a href="/">Home</a>
+                <span class="dot">•</span>
+                <a href="/work/">Work</a>
+                <span class="dot">•</span>
+                <a href="/about/">About</a>
+            </nav>
+            <div class="footer-name">Ikedi Jacobs</div>
+        </div>
+        <div class="footer-shapes">
+            <div class="shape yellow"></div>
+            <div class="shape blue"></div>
+            <div class="shape orange"></div>
+        </div>
+    </footer>
+</body>
+
+</html>
