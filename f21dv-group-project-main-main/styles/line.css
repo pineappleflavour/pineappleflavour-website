@@ -1,0 +1,97 @@
+/* Style for the lines */
+.lineUrban {
+    fill: none;
+    stroke: #4682B4;
+    stroke-width: 4px;
+}
+
+.lineRural {
+    fill: none;
+    stroke: #B6D0E2;
+    stroke-width: 4px;
+}
+
+/* Style for the axes*/
+.x-axis path,  .x-axis line {
+    fill: none;
+    stroke: black;
+}
+
+.y-axis path, .y-axis line {
+    fill: none;
+    stroke: black;
+}
+
+/* Style for axis labels */
+.x-axis-label, .y-axis-label {
+    font-size: 14px;
+    text-anchor: middle;
+}
+
+/* Style for the legend */
+.urban-legend-box {
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+    display: inline-block;
+    fill: #4682B4;
+}
+
+.rural-legend-box {
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+    display: inline-block;
+    fill: #B6D0E2; 
+}
+
+.legend-text {
+    vertical-align: left;
+    margin-right: 0px;
+    text-anchor: start;
+    font-size: 11px;
+}
+
+.legend rect {
+    width: 150;
+    height: 60;
+    margin-right: 4px;
+}
+
+/* Style for the markers(line, dot) */
+.tipline
+{
+    stroke:black;
+    stroke-width: 1;
+    opacity:1;
+}
+
+.tipdoturban, .tipdotrural{
+    fill:black; 
+    opacity: 1;  
+}
+
+.tipruraltext, .tipurbantext{
+    text-anchor:middle;
+    opacity:1;
+}
+
+/* Style for the unavailable data */
+.noData{
+    text-anchor:middle;
+    font-size: large;
+}
+
+/* Style for title*/
+.title{
+    text-anchor:'middle';
+    font-size:'24px';
+    font-family:'Arial';
+    font-weight: bold;
+}
+
+/*Style for Line Chart*/
+.linechart{
+    border: 1px solid;
+    border-radius: 5px;
+}

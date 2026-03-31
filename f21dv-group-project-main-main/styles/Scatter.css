@@ -1,0 +1,14 @@
+.ScatterPlot_Vis{
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+#tooltip {
+    position: absolute;
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: black;
+    padding: 7px;
+    border-radius: 7px;
+    font-size: 15px;
+}

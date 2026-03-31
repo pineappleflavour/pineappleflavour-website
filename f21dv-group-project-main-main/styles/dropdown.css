@@ -1,0 +1,19 @@
+/*style for dropdown*/
+.filterContainer1 {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  
+}
+
+.dropdown {
+  margin-left: 10px;
+}
+
+select{
+  width: 200px;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc; 
+}

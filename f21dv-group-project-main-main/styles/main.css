@@ -1,0 +1,53 @@
+/* Import other CSS files*/
+@import './butterfly.css';
+@import './line.css';
+@import './dropdown.css';
+@import './choropleth.css';
+@import './donut.css';
+@import './scatter.css';
+
+
+.grid {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    grid-template-rows: 0.1fr 0.1fr 1.6fr 1.2fr 1.2fr;  
+    grid-template-areas: 
+      "title    title"
+      ".       filter"
+      "map        map"
+      "scatter  donut"
+      "butterfly line"; 
+    justify-items: center; 
+    align-items: center;
+  
+}
+
+#title{
+    grid-area: title; 
+}
+
+#filterContainer{
+    grid-area: filter; 
+    justify-self: end;   
+}
+
+.map-container{
+    width:100%;
+    grid-area:map;
+}
+
+#butterfly{
+    grid-area: butterfly;
+}
+
+#line{
+    grid-area: line; 
+}
+
+#scatter{
+    grid-area: scatter;
+}
+
+#donut{
+    grid-area: donut;  
+}

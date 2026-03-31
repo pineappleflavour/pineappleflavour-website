@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Health Dashboard | Project</title>
+    <link rel="icon" href="/assets/favicon.ico" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+        rel="stylesheet">
+    <style>
+        .p-hero {
+            background: linear-gradient(135deg, #03111f 0%, #0d2b52 48%, #008743 100%);
+            padding: 120px 40px 60px;
+            color: #fff;
+        }
+
+        .p-header-top {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            margin-bottom: 40px;
+        }
+
+        .p-title {
+            font-size: clamp(54px, 10vw, 132px);
+            font-weight: 900;
+            line-height: 0.92;
+            letter-spacing: -0.04em;
+            max-width: 10ch;
+        }
+
+        .p-info-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 80px 40px;
+            gap: 60px;
+            background-color: var(--bg-color);
+        }
+
+        .p-details-list h4 {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            margin-top: 24px;
+        }
+
+        .p-details-list p {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .p-intro-text {
+            font-size: 20px;
+            line-height: 1.5;
+        }
+
+        .p-media-grid {
+            padding: 40px;
+            display: grid;
+            gap: 40px;
+        }
+
+        .p-text-block {
+            max-width: 720px;
+            margin: 0 auto;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .p-text-block h3 {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .cta-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 20px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .cta-link.primary {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        .cta-link.secondary {
+            background: #eef4ff;
+            color: #0d2b52;
+        }
+
+        .dashboard-showcase {
+            margin: 0 40px 40px;
+            padding: 32px;
+            border-radius: 32px;
+            background:
+                radial-gradient(circle at top left, rgba(0, 166, 81, 0.18), transparent 32%),
+                radial-gradient(circle at top right, rgba(255, 199, 44, 0.2), transparent 28%),
+                linear-gradient(135deg, #04162d 0%, #0d2b52 55%, #03111f 100%);
+            color: #fff;
+        }
+
+        .dashboard-showcase .project-preview {
+            min-height: 420px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .dashboard-caption {
+            margin-top: 18px;
+            max-width: 640px;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        @media (max-width: 900px) {
+            .p-info-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .p-hero,
+            .p-info-section,
+            .p-media-grid,
+            .dashboard-showcase {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .dashboard-showcase {
+                margin-left: 24px;
+                margin-right: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body class="page-projects">
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="nav-pill">Home</a>
+            <a href="/work/" class="nav-pill active">Projects</a>
+            <a href="/about/" class="nav-pill">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="p-hero">
+            <div class="p-header-top"><a href="/work/">← Back to projects</a></div>
+            <h1 class="p-title">Global Health Dashboard</h1>
+        </section>
+
+        <section class="p-info-section">
+            <div class="p-details-list">
+                <h4>Type</h4>
+                <p>Group Coursework</p>
+                <h4>Date</h4>
+                <p>2023 to 2024</p>
+                <h4>For</h4>
+                <p>Data Visualisation and Analytics</p>
+                <h4>Role</h4>
+                <p>Group Leader and Contributor</p>
+            </div>
+            <div class="p-intro-text">
+                <p>
+                    This project is an interactive D3.js dashboard exploring the relationship between life expectancy,
+                    population change, public expenditure, and demographic structure across countries.
+                    It was built as part of an F21DV group project and combines multiple linked charts so the viewer can
+                    move from global patterns to country-level detail.
+                </p>
+                <div class="cta-row">
+                    <a href="/f21dv-group-project-main-main/" class="cta-link primary">Open live dashboard</a>
+                    <a href="/f21dv-group-project-main-main/README.md" class="cta-link secondary">View project README</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-showcase">
+            <div class="project-preview project-preview--f21dv">
+                <div class="project-preview-grid">
+                    <div class="project-preview-title">
+                        <span class="project-preview-kicker">F21DV / D3 DASHBOARD</span>
+                        <span class="project-preview-heading">Global health and demographic trends</span>
+                    </div>
+                    <div class="project-preview-panel">
+                        <span>Choropleth map</span>
+                    </div>
+                    <div class="project-preview-chart"></div>
+                    <div class="project-preview-chart"></div>
+                    <div class="project-preview-panel">
+                        <span>Linked analytics views</span>
+                    </div>
+                </div>
+            </div>
+            <p class="dashboard-caption">
+                The original coursework remains intact inside the repository, and this portfolio page acts as the bridge
+                between your site and the live dashboard artifact.
+            </p>
+        </section>
+
+        <section class="p-media-grid">
+            <div class="p-text-block">
+                <h3>01 / What the project does</h3>
+                <p>
+                    The dashboard uses five coordinated views: a choropleth map, scatter plot, donut chart, butterfly
+                    chart, and line chart. Filters at the top of the interface update the different visualisations,
+                    helping users compare countries and observe how broader demographic and health indicators change
+                    together.
+                </p>
+            </div>
+
+            <div class="p-text-block">
+                <h3>02 / Why it belongs in the portfolio</h3>
+                <p>
+                    This is a strong portfolio piece because it shows more than analysis alone. It demonstrates visual
+                    storytelling, interaction design, data wrangling, and front-end implementation in D3.js, while also
+                    highlighting collaboration on a substantial school project.
+                </p>
+            </div>
+
+            <div class="p-text-block">
+                <h3>03 / Recommended presentation strategy</h3>
+                <p>
+                    The cleanest setup is to keep the coursework dashboard in its original folder as the live artifact,
+                    and feature this page as the case study layer. That gives visitors context first, then lets them
+                    jump into the full interactive project when they are ready.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="copyright">© 2026 | Pineappleflavour.com</div>
+            <nav class="footer-nav">
+                <a href="/">Home</a>
+                <span class="dot">•</span>
+                <a href="/work/">Work</a>
+                <span class="dot">•</span>
+                <a href="/about/">About</a>
+            </nav>
+            <div class="footer-name">Ikedi Jacobs</div>
+        </div>
+        <div class="footer-shapes">
+            <div class="shape yellow"></div>
+            <div class="shape blue"></div>
+            <div class="shape orange"></div>
+        </div>
+    </footer>
+    <script src="/main.js"></script>
+</body>
+
+</html>

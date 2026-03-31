@@ -1,0 +1,43 @@
+/*Style for left bars*/
+svg.butterfly rect.left_bar {
+    fill: #4682B4;
+    
+}
+/*Style for right bars*/
+svg.butterfly rect.right_bar {
+    fill: #0096FF;
+}
+
+/* Styke for legend text */
+text.legend{
+    text-anchor:middle;
+    font-weight:bold;
+    font-size: 20px;
+}
+
+/* Style for bar highlight*/
+rect.right_bar.highlight, rect.left_bar.highlight{
+    stroke: #000000;
+    stroke-width: 1px;
+
+}
+
+/* Style for the unavailable data */
+.noData{
+    text-anchor:middle;
+    font-size: large;
+}
+
+/* Style for title*/
+.title{
+    text-anchor:'middle';
+    font-size:'24px';
+    font-family:'Arial';
+    font-weight: bold;
+}
+
+/*Style for Butterfly Chart*/
+.butterflychart{
+    border: 1px solid;
+    border-radius: 5px;
+}
