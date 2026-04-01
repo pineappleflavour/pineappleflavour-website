@@ -1,5 +1,5 @@
 // Import javascript modules
-import Butterfly from './Butterfly.js';
+import Butterfly from './butterfly.js';
 import Line from './Line.js';
 import Scatter from './ScatterPlot.js';
 import Donut from './donutpie.js';
