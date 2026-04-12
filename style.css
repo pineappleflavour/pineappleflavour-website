@@ -7,6 +7,7 @@
     --accent-blue: #1e4bd6;
     --accent-orange: #ff4d00;
     --accent-yellow: #ffc72c;
+    --experimental-yellow: #fcef97;
 
     /* Typography */
     --font-main: 'Bricolage Grotesque', sans-serif;
@@ -104,7 +105,7 @@ body {
 }
 
 .hero-content {
-    background-color: var(--accent-green);
+    background-color: #fff;
     padding: 80px 40px;
     border-radius: 4px;
 }
@@ -120,7 +121,7 @@ body {
     line-height: 0.9;
     letter-spacing: -0.04em;
     font-weight: 900;
-    color: #fff;
+    color: var(--accent-green);
     text-transform: none;
 }
 
@@ -141,9 +142,9 @@ body {
 }
 
 .hero-info-box {
-    background-color: var(--accent-brown);
+    background-color: var(--experimental-yellow);
     padding: 60px 40px;
-    color: #fff;
+    color: var(--text-primary);
     margin-top: -5px;
     /* Slight overlap or flush */
 }
