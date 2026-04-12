@@ -141,6 +141,18 @@ body {
     }
 }
 
+.rotating-pineapple {
+        animation: spinPineapple 12s linear infinite;
+        transform-origin: center;
+        /* Optional: Add a subtle drop shadow to make it pop */
+        filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.15));
+    }
+
+    @keyframes spinPineapple {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
 .hero-info-box {
     background-color: var(--experimental-yellow);
     padding: 60px 40px;
