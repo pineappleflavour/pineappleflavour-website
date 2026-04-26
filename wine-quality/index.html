@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Quality | Project</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+        rel="stylesheet">
+    <style>
+        .p-hero {
+            background-color: var(--accent-green);
+            padding: 120px 40px 60px;
+            color: #fff;
+        }
+
+        .p-header-top {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            margin-bottom: 40px;
+        }
+
+        .p-title {
+            font-size: clamp(60px, 12vw, 150px);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+        }
+
+        .p-info-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 80px 40px;
+            gap: 60px;
+            background-color: var(--bg-color);
+        }
+
+        .p-details-list h4 {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            margin-top: 24px;
+        }
+
+        .p-details-list p {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .p-intro-text {
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .p-full-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .p-media-grid {
+            padding: 40px;
+            display: grid;
+            gap: 40px;
+        }
+
+        .p-text-block {
+            max-width: 900px;
+            margin: 80px auto;
+            font-size: 18px;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .p-text-block h3 {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+
+<body class="page-projects">
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="nav-pill">Home</a>
+            <a href="/work/" class="nav-pill active">Projects</a>
+            <a href="/about/" class="nav-pill">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="p-hero">
+            <div class="p-header-top"><a href="/work/">← Back to projects</a></div>
+            <h1 class="p-title">Wine Quality<br></h1>
+        </section>
+
+        <section class="p-info-section">
+            <div class="p-details-list">
+                <h4>Client</h4>
+                <p>Personal</p>
+                <h4>Date</h4>
+                <p>April 2026</p>
+                <h4>For</h4>
+                <p>Exploratory Data Analysis</p>
+            </div>
+            <div class="p-intro-text">
+                <p> <img src="/assets/header-winequality.png" alt="Wine Quality Header"> <br><br>
+                    In the world of data science, it is quite easy to get lost in the sea of Kaggle Notebooks and
+                    quick code snippets. However, as I grow in my craft, I've realized that data analytics is not just
+                    a set of tools and techniques - it is a philosophy of understanding, and a search for truth.
+                    <br><br>
+                    I believe a complete data project requires a "Full-Stack" approach: deep reading, critical thinking,
+                    exhaustive exploration, and artistic communication. This post outlines my personal framwork for data
+                    analytics, using the classic <a href="https://archive.ics.uci.edu/ml/datasets/wine+quality">UCI Wine
+                        Quality Dataset</a> as a case study.
+                </p>
+            </div>
+        </section>
+
+        <div class="p-text-block">
+            <h2>01 / The Art of 'Slow' Data Entry</h2>
+            <p>
+                Before writing a single line of Python code, I start with manual immersion into the project and the
+                data.
+                While most jump straight into <code>df.describe()</code> and <code>df.info()</code>, I prefer and
+                recommend to:
+            <ul>
+                <li><b>Read the Research:</b> This datasets stems from the Minho region of Portugal, originally
+                    published in 2009, representing "Vinho Verde" wines.
+                    I study the research paper to understand the thoughts of the researchers.</li>
+                <li><b>Excel Scroll:</b> I open the CSV and scroll to the very last row. I want to see the headers and
+                    the raw formating of the dataset.
+                    It also helps me get a feel of what the data looks like.</li>
+                <li><b>Understanding the Target:</b> I try to understand the target variable and what it means. A
+                    crucial relaisation here is that the "Quality" is not
+                    an objective chemical truth - it is a measure of human preference. It is the median score of at
+                    least three blind tasters. Understanding this shifts the project
+                    from "measuring wine" to "predicting human preferred taste".</li>
+            </ul>
+            </p>
+        </div>
+
+        <div class="p-text-block">
+            <h2>02 / Themematic Exploration</h2>
+            <p>
+                To avoid aimless exploration, I establish themes with the view of <i>What questions can this dataset
+                    answer?</i>. I combine my own curiosity with the power of AI tools (Claude, ChatGPT, and Gemini) to
+                brainstorm angles that
+                a business manager would actually care about.
+            <ul>
+                <li><b>Feature-driven Exploration:</b> Selecting groups of variables and examining how they relate to
+                    the target variable. <br>
+                    Example: Chemical Fingerprint: What markers are non-negotiables for premium vs. budget wines?</li>
+                <li><b>Question-driven Exploration:</b> Starting with an abstract question and using the data to
+                    investigate it.</li>
+                <li><b>AI-assisted Ideation:</b> I use tools like ChatGPT, Cladue, and Gemini by feeding them the
+                    dataset description and column details. They generate exploration themes, which I then implement
+                    myself. This is one
+                    of my favorite approaches to be honest. It expands my thinking, mirrors real-world stakeholder
+                    questions and helps sharpen my skill.</li>
+            </ul>
+            </p>
+        </div>
+
+        <div class="p-text-block">
+            <h2>03 / Data Cleaning and EDA</h2>
+            <p>
+                I shouldn't speak much on this. Do your data cleaning and your EDA. Common man, we shouldn't even be
+                talking about this.
+            </p>
+        </div>
+
+        <section class="p-media-grid">
+            <!-- Placeholder for d3 visualisations for this project or any visualisations -->
+            <!-- <img src="/assets/winequality.png" alt="Wine Quality" class="p-full-img"> -->
+
+        </section>
+
+        <div class="p-text-block">
+            <h2>04 / Predictive Analytics</h2>
+            <p>
+                My approach to Machine Learning is 'no stone left unturned'. I treat most projetc as a dual challenge:
+            <ul>
+                <li><b>Regression:</b> I predicting the exact score (0–10) using models like Random Forest, XGBoost, and
+                    SVR..</li>
+                <li><b>Classification:</b> Categorizing wine into Low (0-4), Medium (5-7), and High (8-10) quality using
+                    Logistic Regression, Naive Bayes, and Neural Networks.</li>
+                <li><b>Rigorous Evaluation:</b> I compare mI compare models using RMSE/MAE for regression and
+                    F1-Score/ROC-AUC for classification, followed by hyperparameter tuning to ensure the best possible
+                    performance.</li>
+            </ul>
+            </p>
+        </div>
+
+        <div class="p-text-block">
+            <h2>05 / Automation and Scalability</h2>
+            <p>
+                To mimic a real-world production environment, I don't stop at a notebook. I write a Python script to
+                automate the entire pipeline.
+                This ensures that if a wine producer provides a continuous stream of new data, the system can
+                automatically preprocess it and output a quality prediction using the champion model. Please don't stop
+                at Jupyter Notebooks, I beg you.
+            </p>
+        </div>
+
+        <div class="p-text-block">
+            <h2>06 / Visualization</h2>
+            <p> It is important to create visualisations using Python libraries such as seaborn. But, beyond that, I
+                design business-oriented dashboards:
+                I sketch ideas before building them.
+                I focus on how insights are communicated, not just displayed.
+                <br><br>
+                My perspective on visualisation was shaped by my experience with Viz for Social Good (VFSG). While I
+                initially struggled with confidence and did not publish my work,
+                I learned a lot by observing professionals—their design thinking, storytelling, and execution.
+                I also draw inspiration from sources like Tableau Public and The Economist.
+                <br><br>
+                For me, visualisation is an art. Communicating insights effectively is just as important as the analysis
+                itself.
+            </p>
+        </div>
+
+        <div class="p-text-block">
+            <h2>07 / Compelling Reporting</h2>
+            <p>
+                The final step is the one most often skipped: The Compelling Report. I believe in documenting
+                everything—the successes, the failed models, and the "why" behind the results.
+                A great document respects the work done; it translates the technical complexity into a story that a
+                business owner can use to optimize their cultivation
+                and maximize their revenue.
+                I think this is an act of respect for the craft of data science, and for all who intend to read the
+                work.
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="copyright">© 2025 | Pineappleflavour.com</div>
+            <nav class="footer-nav">
+                <a href="/">Home</a>
+                <span class="dot">•</span>
+                <a href="/work/">Work</a>
+                <span class="dot">•</span>
+                <a href="/about/">About</a>
+            </nav>
+            <div class="footer-name">Ikedi Jacobs</div>
+        </div>
+        <div class="footer-shapes">
+            <div class="shape yellow"></div>
+            <div class="shape blue"></div>
+            <div class="shape orange"></div>
+        </div>
+    </footer>
+    <script src="/main.js"></script>
+</body>
+
+</html>
