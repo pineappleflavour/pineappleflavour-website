@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier League Season Journey | Project</title>
+<link rel="icon" href="/assets/favicon.ico" type="image/png">
+<link rel="stylesheet" href="/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+  rel="stylesheet">
+<script src="/f21dv-group-project-main-main/lib/d3/d3.v7.min.js"></script>
+<style>
+  :root {
+    --pl-surface: #ffffff;
+    --pl-border: rgba(26, 26, 26, 0.12);
+    --pl-muted: #646464;
+    --pl-ink: #1a1a1a;
+    --pl-paper: #f7f9fb;
+    --pl-accent: var(--accent-blue);
+    --relegation: #ff3b3b;
+    --europe: #3b9eff;
+    --champions: #fff345;
+    --premier-league-blue: #1adef4;
+  }
+
+  .pl-hero {
+    background: var(--premier-league-blue);
+    color: var(--text-primary);
+    padding: 120px 40px 60px;
+  }
+
+  .pl-header-top {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    margin-bottom: 40px;
+  }
+
+  .pl-header-top a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .pl-title {
+    font-size: clamp(58px, 12vw, 150px);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    max-width: 11ch;
+  }
+
+  .pl-info-section {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    padding: 80px 40px;
+    gap: 60px;
+    background-color: var(--bg-color);
+  }
+
+  .pl-details-list h4 {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-top: 24px;
+  }
+
+  .pl-details-list p {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .pl-intro-text {
+    font-size: 20px;
+    line-height: 1.5;
+  }
+
+  .pl-viz-section {
+    padding: 40px;
+    background: #fff;
+  }
+
+  .pl-chart-shell {
+    border: 1px solid var(--pl-border);
+    background: var(--pl-paper);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .pl-chart-header {
+    padding: 28px 32px 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .title-block h1 {
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--pl-ink);
+  }
+
+  .title-block .season {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pl-muted);
+    margin-top: 10px;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    background: #fff;
+    border: 1px solid var(--pl-border);
+    color: var(--pl-ink);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-family: var(--font-main);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--pl-accent); color: var(--pl-accent); }
+  .btn.active { background: var(--pl-accent); border-color: var(--pl-accent); color: #fff; }
+
+  .week-display {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--pl-accent);
+    min-width: 80px;
+    text-align: right;
+    font-weight: 700;
+  }
+
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 200px;
+    height: 3px;
+    background: rgba(26, 26, 26, 0.16);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--pl-accent);
+    cursor: pointer;
+  }
+
+  .main {
+    display: flex;
+    gap: 0;
+    padding: 20px 32px 30px;
+    overflow-x: auto;
+  }
+
+  #chart-container {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    min-width: 760px;
+  }
+
+  .zone-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .team-line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke-width 0.2s, opacity 0.2s;
+    cursor: pointer;
+  }
+
+  .team-line.dimmed { opacity: 0.06; }
+  .team-line.highlighted { stroke-width: 3.5; }
+
+  .pl-dot {
+    cursor: pointer;
+    transition: r 0.15s, opacity 0.2s;
+  }
+  .pl-dot.dimmed { opacity: 0.06; }
+
+  .label-end {
+    font-size: 11px;
+    font-weight: 500;
+    dominant-baseline: middle;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .label-end.dimmed { opacity: 0.06; }
+
+  .tooltip {
+    position: fixed;
+    background: #fff;
+    border: 1px solid var(--pl-border);
+    padding: 10px 14px;
+    border-radius: 8px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    font-size: 0.82rem;
+    z-index: 100;
+    min-width: 160px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+  }
+
+  .tooltip .tt-team {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .tooltip .tt-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--pl-muted);
+    line-height: 1.8;
+  }
+
+  .tooltip .tt-row span:last-child { color: var(--pl-ink); font-weight: 700; }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    padding: 18px 32px 0;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.75rem;
+    color: var(--pl-muted);
+  }
+
+  .legend-stripe {
+    width: 24px;
+    height: 3px;
+    border-radius: 2px;
+    opacity: 0.75;
+  }
+
+  @media (max-width: 900px) {
+    .pl-info-section {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .pl-hero,
+    .pl-info-section,
+    .pl-viz-section {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .pl-chart-header,
+    .legend,
+    .main {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .controls {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .slider-wrap {
+      width: 100%;
+    }
+
+    input[type=range] {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+</style>
+</head>
+<body class="page-projects">
+<header class="header">
+  <nav class="nav">
+    <a href="/" class="nav-pill">Home</a>
+    <a href="/work/" class="nav-pill active">Projects</a>
+    <a href="/about/" class="nav-pill">About</a>
+  </nav>
+</header>
+
+<main>
+  <section class="pl-hero">
+    <div class="pl-header-top"><a href="/work/">← Back to projects</a></div>
+    <h1 class="pl-title">Premier League Season Journey</h1>
+  </section>
+
+  <section class="pl-info-section">
+    <div class="pl-details-list">
+      <h4>Type</h4>
+      <p>Interactive D3.js Visualisation</p>
+      <h4>Date</h4>
+      <p>May 2026</p>
+      <h4>Focus</h4>
+      <p>Season table movement</p>
+    </div>
+    <div class="pl-intro-text">
+      <p>
+        A week-by-week view of the 2025 to 2026 Premier League table, built as an interactive line chart.
+        Use the filters to isolate the title race or relegation battle, then scrub through gameweeks to see
+        each team's climb, collapse, or slow drift across the season.
+      </p>
+    </div>
+  </section>
+
+  <section class="pl-viz-section">
+    <div class="pl-chart-shell">
+      <div class="pl-chart-header">
+        <div class="title-block">
+          <h1>Premier League</h1>
+          <div class="season">2025 to 2026 season / table positions by gameweek</div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btn-all">All Teams</button>
+          <button class="btn" id="btn-top6">Top 5</button>
+          <button class="btn" id="btn-bottom3">Relegation</button>
+          <div class="slider-wrap">
+            <input type="range" id="weekSlider" min="1" max="38" value="38">
+            <div class="week-display" id="weekLabel">GW 38</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-stripe" style="background:#ffd700"></div>Champions League (Top 5)</div>
+        <div class="legend-item"><div class="legend-stripe" style="background:#3b9eff"></div>Europa League (6th to 7th)</div>
+        <div class="legend-item"><div class="legend-stripe" style="background:#ff3b3b"></div>Relegation Zone (18th to 20th)</div>
+      </div>
+
+      <div class="main">
+        <div id="chart-container">
+          <svg id="chart"></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-top">
+    <div class="copyright">© 2026 | Pineappleflavour.com</div>
+    <nav class="footer-nav">
+      <a href="/">Home</a>
+      <span class="dot">•</span>
+      <a href="/work/">Work</a>
+      <span class="dot">•</span>
+      <a href="/about/">About</a>
+    </nav>
+    <div class="footer-name">Ikedi Jacobs</div>
+  </div>
+  <div class="footer-shapes">
+    <div class="shape yellow"></div>
+    <div class="shape blue"></div>
+    <div class="shape orange"></div>
+  </div>
+</footer>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const RAW = [{"week": 1, "team": "Manchester City", "position": 1, "points": 3, "played": 1, "won": 1, "drawn": 0, "lost": 0, "gf": 4, "ga": 0, "gd": 4}, {"week": 1, "team": "Sunderland", "position": 2, "points": 3, "played": 1, "won": 1, "drawn": 0, "lost": 0, "gf": 3, "ga": 0, "gd": 3}, {"week": 1, "team": "Tottenham Hotspur", "position": 3, "points": 3, "played": 1, "won": 1, "drawn": 0, "lost": 0, "gf": 3, "ga": 0, "gd": 3}, {"week": 1, "team": "Liverpool", "position": 4, "points": 3, "played": 1, "won": 1, "drawn": 0, "lost": 0, "gf": 4, "ga": 2, "gd": 2}, {"week": 1, "team": "Nottingham Forest", "position": 5, "points": 3, "played": 1, "won": 1, "drawn": 0, "lost": 0, "gf": 3, "ga": 1, "gd": 2}, {"week": 1, "team": "Arsenal", "position": 6, "points": 3, "played": 1, "won": 1, "drawn": 0, "lost": 0, "gf": 1, "ga": 0, "gd": 1}, {"week": 1, "team": "Leeds United", "position": 7, "points": 3, "played": 1, "won": 1, "drawn": 0, "lost": 0, "gf": 1, "ga": 0, "gd": 1}, {"week": 1, "team": "Brighton", "position": 8, "points": 1, "played": 1, "won": 0, "drawn": 1, "lost": 0, "gf": 1, "ga": 1, "gd": 0}, {"week": 1, "team": "Fulham", "position": 9, "points": 1, "played": 1, "won": 0, "drawn": 1, "lost": 0, "gf": 1, "ga": 1, "gd": 0}, {"week": 1, "team": "Aston Villa", "position": 10, "points": 1, "played": 1, "won": 0, "drawn": 1, "lost": 0, "gf": 0, "ga": 0, "gd": 0}, {"week": 1, "team": "Chelsea", "position": 11, "points": 1, "played": 1, "won": 0, "drawn": 1, "lost": 0, "gf": 0, "ga": 0, "gd": 0}, {"week": 1, "team": "Crystal Palace", "position": 12, "points": 1, "played": 1, "won": 0, "drawn": 1, "lost": 0, "gf": 0, "ga": 0, "gd": 0}, {"week": 1, "team": "Newcastle United", "position": 13, "points": 1, "played": 1, "won": 0, "drawn": 1, "lost": 0, "gf": 0, "ga": 0, "gd": 0}, {"week": 1, "team": "Everton", "position": 14, "points": 0, "played": 1, "won": 0, "drawn": 0, "lost": 1, "gf": 0, "ga": 1, "gd": -1}, {"week": 1, "team": "Manchester Utd", "position": 15, "points": 0, "played": 1, "won": 0, "drawn": 0, "lost": 1, "gf": 0, "ga": 1, "gd": -1}, {"week": 1, "team": "Bournemouth", "position": 16, "points": 0, "played": 1, "won": 0, "drawn": 0, "lost": 1, "gf": 2, "ga": 4, "gd": -2}, {"week": 1, "team": "Brentford", "position": 17, "points": 0, "played": 1, "won": 0, "drawn": 0, "lost": 1, "gf": 1, "ga": 3, "gd": -2}, {"week": 1, "team": "Burnley", "position": 18, "points": 0, "played": 1, "won": 0, "drawn": 0, "lost": 1, "gf": 0, "ga": 3, "gd": -3}, {"week": 1, "team": "West Ham United", "position": 19, "points": 0, "played": 1, "won": 0, "drawn": 0, "lost": 1, "gf": 0, "ga": 3, "gd": -3}, {"week": 1, "team": "Wolves", "position": 20, "points": 0, "played": 1, "won": 0, "drawn": 0, "lost": 1, "gf": 0, "ga": 4, "gd": -4}, {"week": 2, "team": "Arsenal", "position": 1, "points": 6, "played": 2, "won": 2, "drawn": 0, "lost": 0, "gf": 6, "ga": 0, "gd": 6}, {"week": 2, "team": "Tottenham Hotspur", "position": 2, "points": 6, "played": 2, "won": 2, "drawn": 0, "lost": 0, "gf": 5, "ga": 0, "gd": 5}, {"week": 2, "team": "Liverpool", "position": 3, "points": 6, "played": 2, "won": 2, "drawn": 0, "lost": 0, "gf": 7, "ga": 4, "gd": 3}, {"week": 2, "team": "Chelsea", "position": 4, "points": 4, "played": 2, "won": 1, "drawn": 1, "lost": 0, "gf": 5, "ga": 1, "gd": 4}, {"week": 2, "team": "Nottingham Forest", "position": 5, "points": 4, "played": 2, "won": 1, "drawn": 1, "lost": 0, "gf": 4, "ga": 2, "gd": 2}, {"week": 2, "team": "Manchester City", "position": 6, "points": 3, "played": 2, "won": 1, "drawn": 0, "lost": 1, "gf": 4, "ga": 2, "gd": 2}, {"week": 2, "team": "Sunderland", "position": 7, "points": 3, "played": 2, "won": 1, "drawn": 0, "lost": 1, "gf": 3, "ga": 2, "gd": 1}, {"week": 2, "team": "Everton", "position": 8, "points": 3, "played": 2, "won": 1, "drawn": 0, "lost": 1, "gf": 2, "ga": 1, "gd": 1}, {"week": 2, "team": "Bournemouth", "position": 9, "points": 3, "played": 2, "won": 1, "drawn": 0, "lost": 1, "gf": 3, "ga": 4, "gd": -1}, {"week": 2, "team": "Brentford", "position": 10, "points": 3, "played": 2, "won": 1, "drawn": 0, "lost": 1, "gf": 2, "ga": 3, "gd": -1}, {"week": 2, "team": "Burnley", "position": 11, "points": 3, "played": 2, "won": 1, "drawn": 0, "lost": 1, "gf": 2, "ga": 3, "gd": -1}, {"week": 2, "team": "Leeds United", "position": 12, "points": 3, "played": 2, "won": 1, "drawn": 0, "lost": 1, "gf": 1, "ga": 5, "gd": -4}, {"week": 2, "team": "Fulham", "position": 13, "points": 2, "played": 2, "won": 0, "drawn": 2, "lost": 0, "gf": 2, "ga": 2, "gd": 0}, {"week": 2, "team": "Crystal Palace", "position": 14, "points": 2, "played": 2, "won": 0, "drawn": 2, "lost": 0, "gf": 1, "ga": 1, "gd": 0}, {"week": 2, "team": "Newcastle United", "position": 15, "points": 1, "played": 2, "won": 0, "drawn": 1, "lost": 1, "gf": 2, "ga": 3, "gd": -1}, {"week": 2, "team": "Manchester Utd", "position": 16, "points": 1, "played": 2, "won": 0, "drawn": 1, "lost": 1, "gf": 1, "ga": 2, "gd": -1}, {"week": 2, "team": "Aston Villa", "position": 17, "points": 1, "played": 2, "won": 0, "drawn": 1, "lost": 1, "gf": 0, "ga": 1, "gd": -1}, {"week": 2, "team": "Brighton", "position": 18, "points": 1, "played": 2, "won": 0, "drawn": 1, "lost": 1, "gf": 1, "ga": 3, "gd": -2}, {"week": 2, "team": "Wolves", "position": 19, "points": 0, "played": 2, "won": 0, "drawn": 0, "lost": 2, "gf": 0, "ga": 5, "gd": -5}, {"week": 2, "team": "West Ham United", "position": 20, "points": 0, "played": 2, "won": 0, "drawn": 0, "lost": 2, "gf": 1, "ga": 8, "gd": -7}, {"week": 3, "team": "Liverpool", "position": 1, "points": 9, "played": 3, "won": 3, "drawn": 0, "lost": 0, "gf": 8, "ga": 4, "gd": 4}, {"week": 3, "team": "Chelsea", "position": 2, "points": 7, "played": 3, "won": 2, "drawn": 1, "lost": 0, "gf": 7, "ga": 1, "gd": 6}, {"week": 3, "team": "Arsenal", "position": 3, "points": 6, "played": 3, "won": 2, "drawn": 0, "lost": 1, "gf": 6, "ga": 1, "gd": 5}, {"week": 3, "team": "Tottenham Hotspur", "position": 4, "points": 6, "played": 3, "won": 2, "drawn": 0, "lost": 1, "gf": 5, "ga": 1, "gd": 4}, {"week": 3, "team": "Everton", "position": 5, "points": 6, "played": 3, "won": 2, "drawn": 0, "lost": 1, "gf": 5, "ga": 3, "gd": 2}, {"week": 3, "team": "Sunderland", "position": 6, "points": 6, "played": 3, "won": 2, "drawn": 0, "lost": 1, "gf": 5, "ga": 3, "gd": 2}, {"week": 3, "team": "Bournemouth", "position": 7, "points": 6, "played": 3, "won": 2, "drawn": 0, "lost": 1, "gf": 4, "ga": 4, "gd": 0}, {"week": 3, "team": "Crystal Palace", "position": 8, "points": 5, "played": 3, "won": 1, "drawn": 2, "lost": 0, "gf": 4, "ga": 1, "gd": 3}, {"week": 3, "team": "Manchester Utd", "position": 9, "points": 4, "played": 3, "won": 1, "drawn": 1, "lost": 1, "gf": 4, "ga": 4, "gd": 0}, {"week": 3, "team": "Nottingham Forest", "position": 10, "points": 4, "played": 3, "won": 1, "drawn": 1, "lost": 1, "gf": 4, "ga": 5, "gd": -1}, {"week": 3, "team": "Brighton", "position": 11, "points": 4, "played": 3, "won": 1, "drawn": 1, "lost": 1, "gf": 3, "ga": 4, "gd": -1}, {"week": 3, "team": "Leeds United", "position": 12, "points": 4, "played": 3, "won": 1, "drawn": 1, "lost": 1, "gf": 1, "ga": 5, "gd": -4}, {"week": 3, "team": "Manchester City", "position": 13, "points": 3, "played": 3, "won": 1, "drawn": 0, "lost": 2, "gf": 5, "ga": 4, "gd": 1}, {"week": 3, "team": "Burnley", "position": 14, "points": 3, "played": 3, "won": 1, "drawn": 0, "lost": 2, "gf": 4, "ga": 6, "gd": -2}, {"week": 3, "team": "Brentford", "position": 15, "points": 3, "played": 3, "won": 1, "drawn": 0, "lost": 2, "gf": 3, "ga": 5, "gd": -2}, {"week": 3, "team": "West Ham United", "position": 16, "points": 3, "played": 3, "won": 1, "drawn": 0, "lost": 2, "gf": 4, "ga": 8, "gd": -4}, {"week": 3, "team": "Newcastle United", "position": 17, "points": 2, "played": 3, "won": 0, "drawn": 2, "lost": 1, "gf": 2, "ga": 3, "gd": -1}, {"week": 3, "team": "Fulham", "position": 18, "points": 2, "played": 3, "won": 0, "drawn": 2, "lost": 1, "gf": 2, "ga": 4, "gd": -2}, {"week": 3, "team": "Aston Villa", "position": 19, "points": 1, "played": 3, "won": 0, "drawn": 1, "lost": 2, "gf": 0, "ga": 4, "gd": -4}, {"week": 3, "team": "Wolves", "position": 20, "points": 0, "played": 3, "won": 0, "drawn": 0, "lost": 3, "gf": 2, "ga": 8, "gd": -6}, {"week": 4, "team": "Liverpool", "position": 1, "points": 12, "played": 4, "won": 4, "drawn": 0, "lost": 0, "gf": 9, "ga": 4, "gd": 5}, {"week": 4, "team": "Arsenal", "position": 2, "points": 9, "played": 4, "won": 3, "drawn": 0, "lost": 1, "gf": 9, "ga": 1, "gd": 8}, {"week": 4, "team": "Tottenham Hotspur", "position": 3, "points": 9, "played": 4, "won": 3, "drawn": 0, "lost": 1, "gf": 8, "ga": 1, "gd": 7}, {"week": 4, "team": "Bournemouth", "position": 4, "points": 9, "played": 4, "won": 3, "drawn": 0, "lost": 1, "gf": 6, "ga": 5, "gd": 1}, {"week": 4, "team": "Chelsea", "position": 5, "points": 8, "played": 4, "won": 2, "drawn": 2, "lost": 0, "gf": 9, "ga": 3, "gd": 6}, {"week": 4, "team": "Everton", "position": 6, "points": 7, "played": 4, "won": 2, "drawn": 1, "lost": 1, "gf": 5, "ga": 3, "gd": 2}, {"week": 4, "team": "Sunderland", "position": 7, "points": 7, "played": 4, "won": 2, "drawn": 1, "lost": 1, "gf": 5, "ga": 3, "gd": 2}, {"week": 4, "team": "Manchester City", "position": 8, "points": 6, "played": 4, "won": 2, "drawn": 0, "lost": 2, "gf": 8, "ga": 4, "gd": 4}, {"week": 4, "team": "Crystal Palace", "position": 9, "points": 6, "played": 4, "won": 1, "drawn": 3, "lost": 0, "gf": 4, "ga": 1, "gd": 3}, {"week": 4, "team": "Newcastle United", "position": 10, "points": 5, "played": 4, "won": 1, "drawn": 2, "lost": 1, "gf": 3, "ga": 3, "gd": 0}, {"week": 4, "team": "Fulham", "position": 11, "points": 5, "played": 4, "won": 1, "drawn": 2, "lost": 1, "gf": 3, "ga": 4, "gd": -1}, {"week": 4, "team": "Brentford", "position": 12, "points": 4, "played": 4, "won": 1, "drawn": 1, "lost": 2, "gf": 5, "ga": 7, "gd": -2}, {"week": 4, "team": "Brighton", "position": 13, "points": 4, "played": 4, "won": 1, "drawn": 1, "lost": 2, "gf": 4, "ga": 6, "gd": -2}, {"week": 4, "team": "Manchester Utd", "position": 14, "points": 4, "played": 4, "won": 1, "drawn": 1, "lost": 2, "gf": 4, "ga": 7, "gd": -3}, {"week": 4, "team": "Nottingham Forest", "position": 15, "points": 4, "played": 4, "won": 1, "drawn": 1, "lost": 2, "gf": 4, "ga": 8, "gd": -4}, {"week": 4, "team": "Leeds United", "position": 16, "points": 4, "played": 4, "won": 1, "drawn": 1, "lost": 2, "gf": 1, "ga": 6, "gd": -5}, {"week": 4, "team": "Burnley", "position": 17, "points": 3, "played": 4, "won": 1, "drawn": 0, "lost": 3, "gf": 4, "ga": 7, "gd": -3}, {"week": 4, "team": "West Ham United", "position": 18, "points": 3, "played": 4, "won": 1, "drawn": 0, "lost": 3, "gf": 4, "ga": 11, "gd": -7}, {"week": 4, "team": "Aston Villa", "position": 19, "points": 2, "played": 4, "won": 0, "drawn": 2, "lost": 2, "gf": 0, "ga": 4, "gd": -4}, {"week": 4, "team": "Wolves", "position": 20, "points": 0, "played": 4, "won": 0, "drawn": 0, "lost": 4, "gf": 2, "ga": 9, "gd": -7}, {"week": 5, "team": "Liverpool", "position": 1, "points": 15, "played": 5, "won": 5, "drawn": 0, "lost": 0, "gf": 11, "ga": 5, "gd": 6}, {"week": 5, "team": "Arsenal", "position": 2, "points": 10, "played": 5, "won": 3, "drawn": 1, "lost": 1, "gf": 10, "ga": 2, "gd": 8}, {"week": 5, "team": "Tottenham Hotspur", "position": 3, "points": 10, "played": 5, "won": 3, "drawn": 1, "lost": 1, "gf": 10, "ga": 3, "gd": 7}, {"week": 5, "team": "Bournemouth", "position": 4, "points": 10, "played": 5, "won": 3, "drawn": 1, "lost": 1, "gf": 6, "ga": 5, "gd": 1}, {"week": 5, "team": "Crystal Palace", "position": 5, "points": 9, "played": 5, "won": 2, "drawn": 3, "lost": 0, "gf": 6, "ga": 2, "gd": 4}, {"week": 5, "team": "Chelsea", "position": 6, "points": 8, "played": 5, "won": 2, "drawn": 2, "lost": 1, "gf": 10, "ga": 5, "gd": 5}, {"week": 5, "team": "Sunderland", "position": 7, "points": 8, "played": 5, "won": 2, "drawn": 2, "lost": 1, "gf": 6, "ga": 4, "gd": 2}, {"week": 5, "team": "Fulham", "position": 8, "points": 8, "played": 5, "won": 2, "drawn": 2, "lost": 1, "gf": 6, "ga": 5, "gd": 1}, {"week": 5, "team": "Manchester City", "position": 9, "points": 7, "played": 5, "won": 2, "drawn": 1, "lost": 2, "gf": 9, "ga": 5, "gd": 4}, {"week": 5, "team": "Everton", "position": 10, "points": 7, "played": 5, "won": 2, "drawn": 1, "lost": 2, "gf": 6, "ga": 5, "gd": 1}, {"week": 5, "team": "Manchester Utd", "position": 11, "points": 7, "played": 5, "won": 2, "drawn": 1, "lost": 2, "gf": 6, "ga": 8, "gd": -2}, {"week": 5, "team": "Leeds United", "position": 12, "points": 7, "played": 5, "won": 2, "drawn": 1, "lost": 2, "gf": 4, "ga": 7, "gd": -3}, {"week": 5, "team": "Newcastle United", "position": 13, "points": 6, "played": 5, "won": 1, "drawn": 3, "lost": 1, "gf": 3, "ga": 3, "gd": 0}, {"week": 5, "team": "Brighton", "position": 14, "points": 5, "played": 5, "won": 1, "drawn": 2, "lost": 2, "gf": 6, "ga": 8, "gd": -2}, {"week": 5, "team": "Nottingham Forest", "position": 15, "points": 5, "played": 5, "won": 1, "drawn": 2, "lost": 2, "gf": 5, "ga": 9, "gd": -4}, {"week": 5, "team": "Burnley", "position": 16, "points": 4, "played": 5, "won": 1, "drawn": 1, "lost": 3, "gf": 5, "ga": 8, "gd": -3}, {"week": 5, "team": "Brentford", "position": 17, "points": 4, "played": 5, "won": 1, "drawn": 1, "lost": 3, "gf": 6, "ga": 10, "gd": -4}, {"week": 5, "team": "Aston Villa", "position": 18, "points": 3, "played": 5, "won": 0, "drawn": 3, "lost": 2, "gf": 1, "ga": 5, "gd": -4}, {"week": 5, "team": "West Ham United", "position": 19, "points": 3, "played": 5, "won": 1, "drawn": 0, "lost": 4, "gf": 5, "ga": 13, "gd": -8}, {"week": 5, "team": "Wolves", "position": 20, "points": 0, "played": 5, "won": 0, "drawn": 0, "lost": 5, "gf": 3, "ga": 12, "gd": -9}, {"week": 6, "team": "Liverpool", "position": 1, "points": 15, "played": 6, "won": 5, "drawn": 0, "lost": 1, "gf": 12, "ga": 7, "gd": 5}, {"week": 6, "team": "Arsenal", "position": 2, "points": 13, "played": 6, "won": 4, "drawn": 1, "lost": 1, "gf": 12, "ga": 3, "gd": 9}, {"week": 6, "team": "Crystal Palace", "position": 3, "points": 12, "played": 6, "won": 3, "drawn": 3, "lost": 0, "gf": 8, "ga": 3, "gd": 5}, {"week": 6, "team": "Tottenham Hotspur", "position": 4, "points": 11, "played": 6, "won": 3, "drawn": 2, "lost": 1, "gf": 11, "ga": 4, "gd": 7}, {"week": 6, "team": "Sunderland", "position": 5, "points": 11, "played": 6, "won": 3, "drawn": 2, "lost": 1, "gf": 7, "ga": 4, "gd": 3}, {"week": 6, "team": "Bournemouth", "position": 6, "points": 11, "played": 6, "won": 3, "drawn": 2, "lost": 1, "gf": 8, "ga": 7, "gd": 1}, {"week": 6, "team": "Manchester City", "position": 7, "points": 10, "played": 6, "won": 3, "drawn": 1, "lost": 2, "gf": 14, "ga": 6, "gd": 8}, {"week": 6, "team": "Chelsea", "position": 8, "points": 8, "played": 6, "won": 2, "drawn": 2, "lost": 2, "gf": 11, "ga": 8, "gd": 3}, {"week": 6, "team": "Everton", "position": 9, "points": 8, "played": 6, "won": 2, "drawn": 2, "lost": 2, "gf": 7, "ga": 6, "gd": 1}, {"week": 6, "team": "Brighton", "position": 10, "points": 8, "played": 6, "won": 2, "drawn": 2, "lost": 2, "gf": 9, "ga": 9, "gd": 0}, {"week": 6, "team": "Fulham", "position": 11, "points": 8, "played": 6, "won": 2, "drawn": 2, "lost": 2, "gf": 7, "ga": 8, "gd": -1}, {"week": 6, "team": "Leeds United", "position": 12, "points": 8, "played": 6, "won": 2, "drawn": 2, "lost": 2, "gf": 6, "ga": 9, "gd": -3}, {"week": 6, "team": "Brentford", "position": 13, "points": 7, "played": 6, "won": 2, "drawn": 1, "lost": 3, "gf": 9, "ga": 11, "gd": -2}, {"week": 6, "team": "Manchester Utd", "position": 14, "points": 7, "played": 6, "won": 2, "drawn": 1, "lost": 3, "gf": 7, "ga": 11, "gd": -4}, {"week": 6, "team": "Newcastle United", "position": 15, "points": 6, "played": 6, "won": 1, "drawn": 3, "lost": 2, "gf": 4, "ga": 5, "gd": -1}, {"week": 6, "team": "Aston Villa", "position": 16, "points": 6, "played": 6, "won": 1, "drawn": 3, "lost": 2, "gf": 4, "ga": 6, "gd": -2}, {"week": 6, "team": "Nottingham Forest", "position": 17, "points": 5, "played": 6, "won": 1, "drawn": 2, "lost": 3, "gf": 5, "ga": 10, "gd": -5}, {"week": 6, "team": "Burnley", "position": 18, "points": 4, "played": 6, "won": 1, "drawn": 1, "lost": 4, "gf": 6, "ga": 13, "gd": -7}, {"week": 6, "team": "West Ham United", "position": 19, "points": 4, "played": 6, "won": 1, "drawn": 1, "lost": 4, "gf": 6, "ga": 14, "gd": -8}, {"week": 6, "team": "Wolves", "position": 20, "points": 1, "played": 6, "won": 0, "drawn": 1, "lost": 5, "gf": 4, "ga": 13, "gd": -9}, {"week": 7, "team": "Arsenal", "position": 1, "points": 16, "played": 7, "won": 5, "drawn": 1, "lost": 1, "gf": 14, "ga": 3, "gd": 11}, {"week": 7, "team": "Liverpool", "position": 2, "points": 15, "played": 7, "won": 5, "drawn": 0, "lost": 2, "gf": 13, "ga": 9, "gd": 4}, {"week": 7, "team": "Tottenham Hotspur", "position": 3, "points": 14, "played": 7, "won": 4, "drawn": 2, "lost": 1, "gf": 13, "ga": 5, "gd": 8}, {"week": 7, "team": "Bournemouth", "position": 4, "points": 14, "played": 7, "won": 4, "drawn": 2, "lost": 1, "gf": 11, "ga": 8, "gd": 3}, {"week": 7, "team": "Manchester City", "position": 5, "points": 13, "played": 7, "won": 4, "drawn": 1, "lost": 2, "gf": 15, "ga": 6, "gd": 9}, {"week": 7, "team": "Crystal Palace", "position": 6, "points": 12, "played": 7, "won": 3, "drawn": 3, "lost": 1, "gf": 9, "ga": 5, "gd": 4}, {"week": 7, "team": "Chelsea", "position": 7, "points": 11, "played": 7, "won": 3, "drawn": 2, "lost": 2, "gf": 13, "ga": 9, "gd": 4}, {"week": 7, "team": "Everton", "position": 8, "points": 11, "played": 7, "won": 3, "drawn": 2, "lost": 2, "gf": 9, "ga": 7, "gd": 2}, {"week": 7, "team": "Sunderland", "position": 9, "points": 11, "played": 7, "won": 3, "drawn": 2, "lost": 2, "gf": 7, "ga": 6, "gd": 1}, {"week": 7, "team": "Manchester Utd", "position": 10, "points": 10, "played": 7, "won": 3, "drawn": 1, "lost": 3, "gf": 9, "ga": 11, "gd": -2}, {"week": 7, "team": "Newcastle United", "position": 11, "points": 9, "played": 7, "won": 2, "drawn": 3, "lost": 2, "gf": 6, "ga": 5, "gd": 1}, {"week": 7, "team": "Brighton", "position": 12, "points": 9, "played": 7, "won": 2, "drawn": 3, "lost": 2, "gf": 10, "ga": 10, "gd": 0}, {"week": 7, "team": "Aston Villa", "position": 13, "points": 9, "played": 7, "won": 2, "drawn": 3, "lost": 2, "gf": 6, "ga": 7, "gd": -1}, {"week": 7, "team": "Fulham", "position": 14, "points": 8, "played": 7, "won": 2, "drawn": 2, "lost": 3, "gf": 8, "ga": 11, "gd": -3}, {"week": 7, "team": "Leeds United", "position": 15, "points": 8, "played": 7, "won": 2, "drawn": 2, "lost": 3, "gf": 7, "ga": 11, "gd": -4}, {"week": 7, "team": "Brentford", "position": 16, "points": 7, "played": 7, "won": 2, "drawn": 1, "lost": 4, "gf": 9, "ga": 12, "gd": -3}, {"week": 7, "team": "Nottingham Forest", "position": 17, "points": 5, "played": 7, "won": 1, "drawn": 2, "lost": 4, "gf": 5, "ga": 12, "gd": -7}, {"week": 7, "team": "Burnley", "position": 18, "points": 4, "played": 7, "won": 1, "drawn": 1, "lost": 5, "gf": 7, "ga": 15, "gd": -8}, {"week": 7, "team": "West Ham United", "position": 19, "points": 4, "played": 7, "won": 1, "drawn": 1, "lost": 5, "gf": 6, "ga": 16, "gd": -10}, {"week": 7, "team": "Wolves", "position": 20, "points": 2, "played": 7, "won": 0, "drawn": 2, "lost": 5, "gf": 5, "ga": 14, "gd": -9}, {"week": 8, "team": "Arsenal", "position": 1, "points": 19, "played": 8, "won": 6, "drawn": 1, "lost": 1, "gf": 15, "ga": 3, "gd": 12}, {"week": 8, "team": "Manchester City", "position": 2, "points": 16, "played": 8, "won": 5, "drawn": 1, "lost": 2, "gf": 17, "ga": 6, "gd": 11}, {"week": 8, "team": "Bournemouth", "position": 3, "points": 15, "played": 8, "won": 4, "drawn": 3, "lost": 1, "gf": 14, "ga": 11, "gd": 3}, {"week": 8, "team": "Liverpool", "position": 4, "points": 15, "played": 8, "won": 5, "drawn": 0, "lost": 3, "gf": 14, "ga": 11, "gd": 3}, {"week": 8, "team": "Chelsea", "position": 5, "points": 14, "played": 8, "won": 4, "drawn": 2, "lost": 2, "gf": 16, "ga": 9, "gd": 7}, {"week": 8, "team": "Tottenham Hotspur", "position": 6, "points": 14, "played": 8, "won": 4, "drawn": 2, "lost": 2, "gf": 14, "ga": 7, "gd": 7}, {"week": 8, "team": "Sunderland", "position": 7, "points": 14, "played": 8, "won": 4, "drawn": 2, "lost": 2, "gf": 9, "ga": 6, "gd": 3}, {"week": 8, "team": "Crystal Palace", "position": 8, "points": 13, "played": 8, "won": 3, "drawn": 4, "lost": 1, "gf": 12, "ga": 8, "gd": 4}, {"week": 8, "team": "Manchester Utd", "position": 9, "points": 13, "played": 8, "won": 4, "drawn": 1, "lost": 3, "gf": 11, "ga": 12, "gd": -1}, {"week": 8, "team": "Brighton", "position": 10, "points": 12, "played": 8, "won": 3, "drawn": 3, "lost": 2, "gf": 12, "ga": 11, "gd": 1}, {"week": 8, "team": "Aston Villa", "position": 11, "points": 12, "played": 8, "won": 3, "drawn": 3, "lost": 2, "gf": 8, "ga": 8, "gd": 0}, {"week": 8, "team": "Everton", "position": 12, "points": 11, "played": 8, "won": 3, "drawn": 2, "lost": 3, "gf": 9, "ga": 9, "gd": 0}, {"week": 8, "team": "Brentford", "position": 13, "points": 10, "played": 8, "won": 3, "drawn": 1, "lost": 4, "gf": 11, "ga": 12, "gd": -1}, {"week": 8, "team": "Newcastle United", "position": 14, "points": 9, "played": 8, "won": 2, "drawn": 3, "lost": 3, "gf": 7, "ga": 7, "gd": 0}, {"week": 8, "team": "Fulham", "position": 15, "points": 8, "played": 8, "won": 2, "drawn": 2, "lost": 4, "gf": 8, "ga": 12, "gd": -4}, {"week": 8, "team": "Leeds United", "position": 16, "points": 8, "played": 8, "won": 2, "drawn": 2, "lost": 4, "gf": 7, "ga": 13, "gd": -6}, {"week": 8, "team": "Burnley", "position": 17, "points": 7, "played": 8, "won": 2, "drawn": 1, "lost": 5, "gf": 9, "ga": 15, "gd": -6}, {"week": 8, "team": "Nottingham Forest", "position": 18, "points": 5, "played": 8, "won": 1, "drawn": 2, "lost": 5, "gf": 5, "ga": 15, "gd": -10}, {"week": 8, "team": "West Ham United", "position": 19, "points": 4, "played": 8, "won": 1, "drawn": 1, "lost": 6, "gf": 6, "ga": 18, "gd": -12}, {"week": 8, "team": "Wolves", "position": 20, "points": 2, "played": 8, "won": 0, "drawn": 2, "lost": 6, "gf": 5, "ga": 16, "gd": -11}, {"week": 9, "team": "Arsenal", "position": 1, "points": 22, "played": 9, "won": 7, "drawn": 1, "lost": 1, "gf": 16, "ga": 3, "gd": 13}, {"week": 9, "team": "Bournemouth", "position": 2, "points": 18, "played": 9, "won": 5, "drawn": 3, "lost": 1, "gf": 16, "ga": 11, "gd": 5}, {"week": 9, "team": "Tottenham Hotspur", "position": 3, "points": 17, "played": 9, "won": 5, "drawn": 2, "lost": 2, "gf": 17, "ga": 7, "gd": 10}, {"week": 9, "team": "Sunderland", "position": 4, "points": 17, "played": 9, "won": 5, "drawn": 2, "lost": 2, "gf": 11, "ga": 7, "gd": 4}, {"week": 9, "team": "Manchester City", "position": 5, "points": 16, "played": 9, "won": 5, "drawn": 1, "lost": 3, "gf": 17, "ga": 7, "gd": 10}, {"week": 9, "team": "Manchester Utd", "position": 6, "points": 16, "played": 9, "won": 5, "drawn": 1, "lost": 3, "gf": 15, "ga": 14, "gd": 1}, {"week": 9, "team": "Liverpool", "position": 7, "points": 15, "played": 9, "won": 5, "drawn": 0, "lost": 4, "gf": 16, "ga": 14, "gd": 2}, {"week": 9, "team": "Aston Villa", "position": 8, "points": 15, "played": 9, "won": 4, "drawn": 3, "lost": 2, "gf": 9, "ga": 8, "gd": 1}, {"week": 9, "team": "Chelsea", "position": 9, "points": 14, "played": 9, "won": 4, "drawn": 2, "lost": 3, "gf": 17, "ga": 11, "gd": 6}, {"week": 9, "team": "Crystal Palace", "position": 10, "points": 13, "played": 9, "won": 3, "drawn": 4, "lost": 2, "gf": 12, "ga": 9, "gd": 3}, {"week": 9, "team": "Brentford", "position": 11, "points": 13, "played": 9, "won": 4, "drawn": 1, "lost": 4, "gf": 14, "ga": 14, "gd": 0}, {"week": 9, "team": "Newcastle United", "position": 12, "points": 12, "played": 9, "won": 3, "drawn": 3, "lost": 3, "gf": 9, "ga": 8, "gd": 1}, {"week": 9, "team": "Brighton", "position": 13, "points": 12, "played": 9, "won": 3, "drawn": 3, "lost": 3, "gf": 14, "ga": 15, "gd": -1}, {"week": 9, "team": "Everton", "position": 14, "points": 11, "played": 9, "won": 3, "drawn": 2, "lost": 4, "gf": 9, "ga": 12, "gd": -3}, {"week": 9, "team": "Leeds United", "position": 15, "points": 11, "played": 9, "won": 3, "drawn": 2, "lost": 4, "gf": 9, "ga": 14, "gd": -5}, {"week": 9, "team": "Burnley", "position": 16, "points": 10, "played": 9, "won": 3, "drawn": 1, "lost": 5, "gf": 12, "ga": 17, "gd": -5}, {"week": 9, "team": "Fulham", "position": 17, "points": 8, "played": 9, "won": 2, "drawn": 2, "lost": 5, "gf": 9, "ga": 14, "gd": -5}, {"week": 9, "team": "Nottingham Forest", "position": 18, "points": 5, "played": 9, "won": 1, "drawn": 2, "lost": 6, "gf": 5, "ga": 17, "gd": -12}, {"week": 9, "team": "West Ham United", "position": 19, "points": 4, "played": 9, "won": 1, "drawn": 1, "lost": 7, "gf": 7, "ga": 20, "gd": -13}, {"week": 9, "team": "Wolves", "position": 20, "points": 2, "played": 9, "won": 0, "drawn": 2, "lost": 7, "gf": 7, "ga": 19, "gd": -12}, {"week": 10, "team": "Arsenal", "position": 1, "points": 25, "played": 10, "won": 8, "drawn": 1, "lost": 1, "gf": 18, "ga": 3, "gd": 15}, {"week": 10, "team": "Manchester City", "position": 2, "points": 19, "played": 10, "won": 6, "drawn": 1, "lost": 3, "gf": 20, "ga": 8, "gd": 12}, {"week": 10, "team": "Liverpool", "position": 3, "points": 18, "played": 10, "won": 6, "drawn": 0, "lost": 4, "gf": 18, "ga": 14, "gd": 4}, {"week": 10, "team": "Sunderland", "position": 4, "points": 18, "played": 10, "won": 5, "drawn": 3, "lost": 2, "gf": 12, "ga": 8, "gd": 4}, {"week": 10, "team": "Bournemouth", "position": 5, "points": 18, "played": 10, "won": 5, "drawn": 3, "lost": 2, "gf": 17, "ga": 14, "gd": 3}, {"week": 10, "team": "Tottenham Hotspur", "position": 6, "points": 17, "played": 10, "won": 5, "drawn": 2, "lost": 3, "gf": 17, "ga": 8, "gd": 9}, {"week": 10, "team": "Chelsea", "position": 7, "points": 17, "played": 10, "won": 5, "drawn": 2, "lost": 3, "gf": 18, "ga": 11, "gd": 7}, {"week": 10, "team": "Manchester Utd", "position": 8, "points": 17, "played": 10, "won": 5, "drawn": 2, "lost": 3, "gf": 17, "ga": 16, "gd": 1}, {"week": 10, "team": "Crystal Palace", "position": 9, "points": 16, "played": 10, "won": 4, "drawn": 4, "lost": 2, "gf": 14, "ga": 9, "gd": 5}, {"week": 10, "team": "Brighton", "position": 10, "points": 15, "played": 10, "won": 4, "drawn": 3, "lost": 3, "gf": 17, "ga": 15, "gd": 2}, {"week": 10, "team": "Aston Villa", "position": 11, "points": 15, "played": 10, "won": 4, "drawn": 3, "lost": 3, "gf": 9, "ga": 10, "gd": -1}, {"week": 10, "team": "Brentford", "position": 12, "points": 13, "played": 10, "won": 4, "drawn": 1, "lost": 5, "gf": 14, "ga": 16, "gd": -2}, {"week": 10, "team": "Newcastle United", "position": 13, "points": 12, "played": 10, "won": 3, "drawn": 3, "lost": 4, "gf": 10, "ga": 11, "gd": -1}, {"week": 10, "team": "Everton", "position": 14, "points": 12, "played": 10, "won": 3, "drawn": 3, "lost": 4, "gf": 10, "ga": 13, "gd": -3}, {"week": 10, "team": "Fulham", "position": 15, "points": 11, "played": 10, "won": 3, "drawn": 2, "lost": 5, "gf": 12, "ga": 14, "gd": -2}, {"week": 10, "team": "Leeds United", "position": 16, "points": 11, "played": 10, "won": 3, "drawn": 2, "lost": 5, "gf": 9, "ga": 17, "gd": -8}, {"week": 10, "team": "Burnley", "position": 17, "points": 10, "played": 10, "won": 3, "drawn": 1, "lost": 6, "gf": 12, "ga": 19, "gd": -7}, {"week": 10, "team": "West Ham United", "position": 18, "points": 7, "played": 10, "won": 2, "drawn": 1, "lost": 7, "gf": 10, "ga": 21, "gd": -11}, {"week": 10, "team": "Nottingham Forest", "position": 19, "points": 6, "played": 10, "won": 1, "drawn": 3, "lost": 6, "gf": 7, "ga": 19, "gd": -12}, {"week": 10, "team": "Wolves", "position": 20, "points": 2, "played": 10, "won": 0, "drawn": 2, "lost": 8, "gf": 7, "ga": 22, "gd": -15}, {"week": 11, "team": "Arsenal", "position": 1, "points": 26, "played": 11, "won": 8, "drawn": 2, "lost": 1, "gf": 20, "ga": 5, "gd": 15}, {"week": 11, "team": "Manchester City", "position": 2, "points": 22, "played": 11, "won": 7, "drawn": 1, "lost": 3, "gf": 23, "ga": 8, "gd": 15}, {"week": 11, "team": "Chelsea", "position": 3, "points": 20, "played": 11, "won": 6, "drawn": 2, "lost": 3, "gf": 21, "ga": 11, "gd": 10}, {"week": 11, "team": "Sunderland", "position": 4, "points": 19, "played": 11, "won": 5, "drawn": 4, "lost": 2, "gf": 14, "ga": 10, "gd": 4}, {"week": 11, "team": "Tottenham Hotspur", "position": 5, "points": 18, "played": 11, "won": 5, "drawn": 3, "lost": 3, "gf": 19, "ga": 10, "gd": 9}, {"week": 11, "team": "Aston Villa", "position": 6, "points": 18, "played": 11, "won": 5, "drawn": 3, "lost": 3, "gf": 13, "ga": 10, "gd": 3}, {"week": 11, "team": "Manchester Utd", "position": 7, "points": 18, "played": 11, "won": 5, "drawn": 3, "lost": 3, "gf": 19, "ga": 18, "gd": 1}, {"week": 11, "team": "Liverpool", "position": 8, "points": 18, "played": 11, "won": 6, "drawn": 0, "lost": 5, "gf": 18, "ga": 17, "gd": 1}, {"week": 11, "team": "Bournemouth", "position": 9, "points": 18, "played": 11, "won": 5, "drawn": 3, "lost": 3, "gf": 17, "ga": 18, "gd": -1}, {"week": 11, "team": "Crystal Palace", "position": 10, "points": 17, "played": 11, "won": 4, "drawn": 5, "lost": 2, "gf": 14, "ga": 9, "gd": 5}, {"week": 11, "team": "Brighton", "position": 11, "points": 16, "played": 11, "won": 4, "drawn": 4, "lost": 3, "gf": 17, "ga": 15, "gd": 2}, {"week": 11, "team": "Brentford", "position": 12, "points": 16, "played": 11, "won": 5, "drawn": 1, "lost": 5, "gf": 17, "ga": 17, "gd": 0}, {"week": 11, "team": "Everton", "position": 13, "points": 15, "played": 11, "won": 4, "drawn": 3, "lost": 4, "gf": 12, "ga": 13, "gd": -1}, {"week": 11, "team": "Newcastle United", "position": 14, "points": 12, "played": 11, "won": 3, "drawn": 3, "lost": 5, "gf": 11, "ga": 14, "gd": -3}, {"week": 11, "team": "Fulham", "position": 15, "points": 11, "played": 11, "won": 3, "drawn": 2, "lost": 6, "gf": 12, "ga": 16, "gd": -4}, {"week": 11, "team": "Leeds United", "position": 16, "points": 11, "played": 11, "won": 3, "drawn": 2, "lost": 6, "gf": 10, "ga": 20, "gd": -10}, {"week": 11, "team": "Burnley", "position": 17, "points": 10, "played": 11, "won": 3, "drawn": 1, "lost": 7, "gf": 14, "ga": 22, "gd": -8}, {"week": 11, "team": "West Ham United", "position": 18, "points": 10, "played": 11, "won": 3, "drawn": 1, "lost": 7, "gf": 13, "ga": 23, "gd": -10}, {"week": 11, "team": "Nottingham Forest", "position": 19, "points": 9, "played": 11, "won": 2, "drawn": 3, "lost": 6, "gf": 10, "ga": 20, "gd": -10}, {"week": 11, "team": "Wolves", "position": 20, "points": 2, "played": 11, "won": 0, "drawn": 2, "lost": 9, "gf": 7, "ga": 25, "gd": -18}, {"week": 12, "team": "Arsenal", "position": 1, "points": 29, "played": 12, "won": 9, "drawn": 2, "lost": 1, "gf": 24, "ga": 6, "gd": 18}, {"week": 12, "team": "Chelsea", "position": 2, "points": 23, "played": 12, "won": 7, "drawn": 2, "lost": 3, "gf": 23, "ga": 11, "gd": 12}, {"week": 12, "team": "Manchester City", "position": 3, "points": 22, "played": 12, "won": 7, "drawn": 1, "lost": 4, "gf": 24, "ga": 10, "gd": 14}, {"week": 12, "team": "Aston Villa", "position": 4, "points": 21, "played": 12, "won": 6, "drawn": 3, "lost": 3, "gf": 15, "ga": 11, "gd": 4}, {"week": 12, "team": "Crystal Palace", "position": 5, "points": 20, "played": 12, "won": 5, "drawn": 5, "lost": 2, "gf": 16, "ga": 9, "gd": 7}, {"week": 12, "team": "Brighton", "position": 6, "points": 19, "played": 12, "won": 5, "drawn": 4, "lost": 3, "gf": 19, "ga": 16, "gd": 3}, {"week": 12, "team": "Sunderland", "position": 7, "points": 19, "played": 12, "won": 5, "drawn": 4, "lost": 3, "gf": 14, "ga": 11, "gd": 3}, {"week": 12, "team": "Bournemouth", "position": 8, "points": 19, "played": 12, "won": 5, "drawn": 4, "lost": 3, "gf": 19, "ga": 20, "gd": -1}, {"week": 12, "team": "Tottenham Hotspur", "position": 9, "points": 18, "played": 12, "won": 5, "drawn": 3, "lost": 4, "gf": 20, "ga": 14, "gd": 6}, {"week": 12, "team": "Manchester Utd", "position": 10, "points": 18, "played": 12, "won": 5, "drawn": 3, "lost": 4, "gf": 19, "ga": 19, "gd": 0}, {"week": 12, "team": "Everton", "position": 11, "points": 18, "played": 12, "won": 5, "drawn": 3, "lost": 4, "gf": 13, "ga": 13, "gd": 0}, {"week": 12, "team": "Liverpool", "position": 12, "points": 18, "played": 12, "won": 6, "drawn": 0, "lost": 6, "gf": 18, "ga": 20, "gd": -2}, {"week": 12, "team": "Brentford", "position": 13, "points": 16, "played": 12, "won": 5, "drawn": 1, "lost": 6, "gf": 18, "ga": 19, "gd": -1}, {"week": 12, "team": "Newcastle United", "position": 14, "points": 15, "played": 12, "won": 4, "drawn": 3, "lost": 5, "gf": 13, "ga": 15, "gd": -2}, {"week": 12, "team": "Fulham", "position": 15, "points": 14, "played": 12, "won": 4, "drawn": 2, "lost": 6, "gf": 13, "ga": 16, "gd": -3}, {"week": 12, "team": "Nottingham Forest", "position": 16, "points": 12, "played": 12, "won": 3, "drawn": 3, "lost": 6, "gf": 13, "ga": 20, "gd": -7}, {"week": 12, "team": "West Ham United", "position": 17, "points": 11, "played": 12, "won": 3, "drawn": 2, "lost": 7, "gf": 15, "ga": 25, "gd": -10}, {"week": 12, "team": "Leeds United", "position": 18, "points": 11, "played": 12, "won": 3, "drawn": 2, "lost": 7, "gf": 11, "ga": 22, "gd": -11}, {"week": 12, "team": "Burnley", "position": 19, "points": 10, "played": 12, "won": 3, "drawn": 1, "lost": 8, "gf": 14, "ga": 24, "gd": -10}, {"week": 12, "team": "Wolves", "position": 20, "points": 2, "played": 12, "won": 0, "drawn": 2, "lost": 10, "gf": 7, "ga": 27, "gd": -20}, {"week": 13, "team": "Arsenal", "position": 1, "points": 30, "played": 13, "won": 9, "drawn": 3, "lost": 1, "gf": 25, "ga": 7, "gd": 18}, {"week": 13, "team": "Manchester City", "position": 2, "points": 25, "played": 13, "won": 8, "drawn": 1, "lost": 4, "gf": 27, "ga": 12, "gd": 15}, {"week": 13, "team": "Chelsea", "position": 3, "points": 24, "played": 13, "won": 7, "drawn": 3, "lost": 3, "gf": 24, "ga": 12, "gd": 12}, {"week": 13, "team": "Aston Villa", "position": 4, "points": 24, "played": 13, "won": 7, "drawn": 3, "lost": 3, "gf": 16, "ga": 11, "gd": 5}, {"week": 13, "team": "Brighton", "position": 5, "points": 22, "played": 13, "won": 6, "drawn": 4, "lost": 3, "gf": 21, "ga": 16, "gd": 5}, {"week": 13, "team": "Sunderland", "position": 6, "points": 22, "played": 13, "won": 6, "drawn": 4, "lost": 3, "gf": 17, "ga": 13, "gd": 4}, {"week": 13, "team": "Manchester Utd", "position": 7, "points": 21, "played": 13, "won": 6, "drawn": 3, "lost": 4, "gf": 21, "ga": 20, "gd": 1}, {"week": 13, "team": "Liverpool", "position": 8, "points": 21, "played": 13, "won": 7, "drawn": 0, "lost": 6, "gf": 20, "ga": 20, "gd": 0}, {"week": 13, "team": "Crystal Palace", "position": 9, "points": 20, "played": 13, "won": 5, "drawn": 5, "lost": 3, "gf": 17, "ga": 11, "gd": 6}, {"week": 13, "team": "Brentford", "position": 10, "points": 19, "played": 13, "won": 6, "drawn": 1, "lost": 6, "gf": 21, "ga": 20, "gd": 1}, {"week": 13, "team": "Bournemouth", "position": 11, "points": 19, "played": 13, "won": 5, "drawn": 4, "lost": 4, "gf": 21, "ga": 23, "gd": -2}, {"week": 13, "team": "Tottenham Hotspur", "position": 12, "points": 18, "played": 13, "won": 5, "drawn": 3, "lost": 5, "gf": 21, "ga": 16, "gd": 5}, {"week": 13, "team": "Newcastle United", "position": 13, "points": 18, "played": 13, "won": 5, "drawn": 3, "lost": 5, "gf": 17, "ga": 16, "gd": 1}, {"week": 13, "team": "Everton", "position": 14, "points": 18, "played": 13, "won": 5, "drawn": 3, "lost": 5, "gf": 14, "ga": 17, "gd": -3}, {"week": 13, "team": "Fulham", "position": 15, "points": 17, "played": 13, "won": 5, "drawn": 2, "lost": 6, "gf": 15, "ga": 17, "gd": -2}, {"week": 13, "team": "Nottingham Forest", "position": 16, "points": 12, "played": 13, "won": 3, "drawn": 3, "lost": 7, "gf": 13, "ga": 22, "gd": -9}, {"week": 13, "team": "West Ham United", "position": 17, "points": 11, "played": 13, "won": 3, "drawn": 2, "lost": 8, "gf": 15, "ga": 27, "gd": -12}, {"week": 13, "team": "Leeds United", "position": 18, "points": 11, "played": 13, "won": 3, "drawn": 2, "lost": 8, "gf": 13, "ga": 25, "gd": -12}, {"week": 13, "team": "Burnley", "position": 19, "points": 10, "played": 13, "won": 3, "drawn": 1, "lost": 9, "gf": 15, "ga": 27, "gd": -12}, {"week": 13, "team": "Wolves", "position": 20, "points": 2, "played": 13, "won": 0, "drawn": 2, "lost": 11, "gf": 7, "ga": 28, "gd": -21}, {"week": 14, "team": "Arsenal", "position": 1, "points": 33, "played": 14, "won": 10, "drawn": 3, "lost": 1, "gf": 27, "ga": 7, "gd": 20}, {"week": 14, "team": "Manchester City", "position": 2, "points": 28, "played": 14, "won": 9, "drawn": 1, "lost": 4, "gf": 32, "ga": 16, "gd": 16}, {"week": 14, "team": "Aston Villa", "position": 3, "points": 27, "played": 14, "won": 8, "drawn": 3, "lost": 3, "gf": 20, "ga": 14, "gd": 6}, {"week": 14, "team": "Chelsea", "position": 4, "points": 24, "played": 14, "won": 7, "drawn": 3, "lost": 4, "gf": 25, "ga": 15, "gd": 10}, {"week": 14, "team": "Crystal Palace", "position": 5, "points": 23, "played": 14, "won": 6, "drawn": 5, "lost": 3, "gf": 18, "ga": 11, "gd": 7}, {"week": 14, "team": "Sunderland", "position": 6, "points": 23, "played": 14, "won": 6, "drawn": 5, "lost": 3, "gf": 18, "ga": 14, "gd": 4}, {"week": 14, "team": "Brighton", "position": 7, "points": 22, "played": 14, "won": 6, "drawn": 4, "lost": 4, "gf": 24, "ga": 20, "gd": 4}, {"week": 14, "team": "Manchester Utd", "position": 8, "points": 22, "played": 14, "won": 6, "drawn": 4, "lost": 4, "gf": 22, "ga": 21, "gd": 1}, {"week": 14, "team": "Liverpool", "position": 9, "points": 22, "played": 14, "won": 7, "drawn": 1, "lost": 6, "gf": 21, "ga": 21, "gd": 0}, {"week": 14, "team": "Everton", "position": 10, "points": 21, "played": 14, "won": 6, "drawn": 3, "lost": 5, "gf": 15, "ga": 17, "gd": -2}, {"week": 14, "team": "Tottenham Hotspur", "position": 11, "points": 19, "played": 14, "won": 5, "drawn": 4, "lost": 5, "gf": 23, "ga": 18, "gd": 5}, {"week": 14, "team": "Newcastle United", "position": 12, "points": 19, "played": 14, "won": 5, "drawn": 4, "lost": 5, "gf": 19, "ga": 18, "gd": 1}, {"week": 14, "team": "Brentford", "position": 13, "points": 19, "played": 14, "won": 6, "drawn": 1, "lost": 7, "gf": 21, "ga": 22, "gd": -1}, {"week": 14, "team": "Bournemouth", "position": 14, "points": 19, "played": 14, "won": 5, "drawn": 4, "lost": 5, "gf": 21, "ga": 24, "gd": -3}, {"week": 14, "team": "Fulham", "position": 15, "points": 17, "played": 14, "won": 5, "drawn": 2, "lost": 7, "gf": 19, "ga": 22, "gd": -3}, {"week": 14, "team": "Nottingham Forest", "position": 16, "points": 15, "played": 14, "won": 4, "drawn": 3, "lost": 7, "gf": 14, "ga": 22, "gd": -8}, {"week": 14, "team": "Leeds United", "position": 17, "points": 14, "played": 14, "won": 4, "drawn": 2, "lost": 8, "gf": 16, "ga": 26, "gd": -10}, {"week": 14, "team": "West Ham United", "position": 18, "points": 12, "played": 14, "won": 3, "drawn": 3, "lost": 8, "gf": 16, "ga": 28, "gd": -12}, {"week": 14, "team": "Burnley", "position": 19, "points": 10, "played": 14, "won": 3, "drawn": 1, "lost": 10, "gf": 15, "ga": 28, "gd": -13}, {"week": 14, "team": "Wolves", "position": 20, "points": 2, "played": 14, "won": 0, "drawn": 2, "lost": 12, "gf": 7, "ga": 29, "gd": -22}, {"week": 15, "team": "Arsenal", "position": 1, "points": 33, "played": 15, "won": 10, "drawn": 3, "lost": 2, "gf": 28, "ga": 9, "gd": 19}, {"week": 15, "team": "Manchester City", "position": 2, "points": 31, "played": 15, "won": 10, "drawn": 1, "lost": 4, "gf": 35, "ga": 16, "gd": 19}, {"week": 15, "team": "Aston Villa", "position": 3, "points": 30, "played": 15, "won": 9, "drawn": 3, "lost": 3, "gf": 22, "ga": 15, "gd": 7}, {"week": 15, "team": "Crystal Palace", "position": 4, "points": 26, "played": 15, "won": 7, "drawn": 5, "lost": 3, "gf": 20, "ga": 12, "gd": 8}, {"week": 15, "team": "Chelsea", "position": 5, "points": 25, "played": 15, "won": 7, "drawn": 4, "lost": 4, "gf": 25, "ga": 15, "gd": 10}, {"week": 15, "team": "Manchester Utd", "position": 6, "points": 25, "played": 15, "won": 7, "drawn": 4, "lost": 4, "gf": 26, "ga": 22, "gd": 4}, {"week": 15, "team": "Everton", "position": 7, "points": 24, "played": 15, "won": 7, "drawn": 3, "lost": 5, "gf": 18, "ga": 17, "gd": 1}, {"week": 15, "team": "Brighton", "position": 8, "points": 23, "played": 15, "won": 6, "drawn": 5, "lost": 4, "gf": 25, "ga": 21, "gd": 4}, {"week": 15, "team": "Sunderland", "position": 9, "points": 23, "played": 15, "won": 6, "drawn": 5, "lost": 4, "gf": 18, "ga": 17, "gd": 1}, {"week": 15, "team": "Liverpool", "position": 10, "points": 23, "played": 15, "won": 7, "drawn": 2, "lost": 6, "gf": 24, "ga": 24, "gd": 0}, {"week": 15, "team": "Tottenham Hotspur", "position": 11, "points": 22, "played": 15, "won": 6, "drawn": 4, "lost": 5, "gf": 25, "ga": 18, "gd": 7}, {"week": 15, "team": "Newcastle United", "position": 12, "points": 22, "played": 15, "won": 6, "drawn": 4, "lost": 5, "gf": 21, "ga": 19, "gd": 2}, {"week": 15, "team": "Bournemouth", "position": 13, "points": 20, "played": 15, "won": 5, "drawn": 5, "lost": 5, "gf": 21, "ga": 24, "gd": -3}, {"week": 15, "team": "Brentford", "position": 14, "points": 19, "played": 15, "won": 6, "drawn": 1, "lost": 8, "gf": 21, "ga": 24, "gd": -3}, {"week": 15, "team": "Fulham", "position": 15, "points": 17, "played": 15, "won": 5, "drawn": 2, "lost": 8, "gf": 20, "ga": 24, "gd": -4}, {"week": 15, "team": "Leeds United", "position": 16, "points": 15, "played": 15, "won": 4, "drawn": 3, "lost": 8, "gf": 19, "ga": 29, "gd": -10}, {"week": 15, "team": "Nottingham Forest", "position": 17, "points": 15, "played": 15, "won": 4, "drawn": 3, "lost": 8, "gf": 14, "ga": 25, "gd": -11}, {"week": 15, "team": "West Ham United", "position": 18, "points": 13, "played": 15, "won": 3, "drawn": 4, "lost": 8, "gf": 17, "ga": 29, "gd": -12}, {"week": 15, "team": "Burnley", "position": 19, "points": 10, "played": 15, "won": 3, "drawn": 1, "lost": 11, "gf": 16, "ga": 30, "gd": -14}, {"week": 15, "team": "Wolves", "position": 20, "points": 2, "played": 15, "won": 0, "drawn": 2, "lost": 13, "gf": 8, "ga": 33, "gd": -25}, {"week": 16, "team": "Arsenal", "position": 1, "points": 36, "played": 16, "won": 11, "drawn": 3, "lost": 2, "gf": 30, "ga": 10, "gd": 20}, {"week": 16, "team": "Manchester City", "position": 2, "points": 34, "played": 16, "won": 11, "drawn": 1, "lost": 4, "gf": 38, "ga": 16, "gd": 22}, {"week": 16, "team": "Aston Villa", "position": 3, "points": 33, "played": 16, "won": 10, "drawn": 3, "lost": 3, "gf": 25, "ga": 17, "gd": 8}, {"week": 16, "team": "Chelsea", "position": 4, "points": 28, "played": 16, "won": 8, "drawn": 4, "lost": 4, "gf": 27, "ga": 15, "gd": 12}, {"week": 16, "team": "Crystal Palace", "position": 5, "points": 26, "played": 16, "won": 7, "drawn": 5, "lost": 4, "gf": 20, "ga": 15, "gd": 5}, {"week": 16, "team": "Manchester Utd", "position": 6, "points": 26, "played": 16, "won": 7, "drawn": 5, "lost": 4, "gf": 30, "ga": 26, "gd": 4}, {"week": 16, "team": "Liverpool", "position": 7, "points": 26, "played": 16, "won": 8, "drawn": 2, "lost": 6, "gf": 26, "ga": 24, "gd": 2}, {"week": 16, "team": "Sunderland", "position": 8, "points": 26, "played": 16, "won": 7, "drawn": 5, "lost": 4, "gf": 19, "ga": 17, "gd": 2}, {"week": 16, "team": "Everton", "position": 9, "points": 24, "played": 16, "won": 7, "drawn": 3, "lost": 6, "gf": 18, "ga": 19, "gd": -1}, {"week": 16, "team": "Brighton", "position": 10, "points": 23, "played": 16, "won": 6, "drawn": 5, "lost": 5, "gf": 25, "ga": 23, "gd": 2}, {"week": 16, "team": "Tottenham Hotspur", "position": 11, "points": 22, "played": 16, "won": 6, "drawn": 4, "lost": 6, "gf": 25, "ga": 21, "gd": 4}, {"week": 16, "team": "Newcastle United", "position": 12, "points": 22, "played": 16, "won": 6, "drawn": 4, "lost": 6, "gf": 21, "ga": 20, "gd": 1}, {"week": 16, "team": "Bournemouth", "position": 13, "points": 21, "played": 16, "won": 5, "drawn": 6, "lost": 5, "gf": 25, "ga": 28, "gd": -3}, {"week": 16, "team": "Fulham", "position": 14, "points": 20, "played": 16, "won": 6, "drawn": 2, "lost": 8, "gf": 23, "ga": 26, "gd": -3}, {"week": 16, "team": "Brentford", "position": 15, "points": 20, "played": 16, "won": 6, "drawn": 2, "lost": 8, "gf": 22, "ga": 25, "gd": -3}, {"week": 16, "team": "Nottingham Forest", "position": 16, "points": 18, "played": 16, "won": 5, "drawn": 3, "lost": 8, "gf": 17, "ga": 25, "gd": -8}, {"week": 16, "team": "Leeds United", "position": 17, "points": 16, "played": 16, "won": 4, "drawn": 4, "lost": 8, "gf": 20, "ga": 30, "gd": -10}, {"week": 16, "team": "West Ham United", "position": 18, "points": 13, "played": 16, "won": 3, "drawn": 4, "lost": 9, "gf": 19, "ga": 32, "gd": -13}, {"week": 16, "team": "Burnley", "position": 19, "points": 10, "played": 16, "won": 3, "drawn": 1, "lost": 12, "gf": 18, "ga": 33, "gd": -15}, {"week": 16, "team": "Wolves", "position": 20, "points": 2, "played": 16, "won": 0, "drawn": 2, "lost": 14, "gf": 9, "ga": 35, "gd": -26}, {"week": 17, "team": "Arsenal", "position": 1, "points": 39, "played": 17, "won": 12, "drawn": 3, "lost": 2, "gf": 31, "ga": 10, "gd": 21}, {"week": 17, "team": "Manchester City", "position": 2, "points": 37, "played": 17, "won": 12, "drawn": 1, "lost": 4, "gf": 41, "ga": 16, "gd": 25}, {"week": 17, "team": "Aston Villa", "position": 3, "points": 36, "played": 17, "won": 11, "drawn": 3, "lost": 3, "gf": 27, "ga": 18, "gd": 9}, {"week": 17, "team": "Chelsea", "position": 4, "points": 29, "played": 17, "won": 8, "drawn": 5, "lost": 4, "gf": 29, "ga": 17, "gd": 12}, {"week": 17, "team": "Liverpool", "position": 5, "points": 29, "played": 17, "won": 9, "drawn": 2, "lost": 6, "gf": 28, "ga": 25, "gd": 3}, {"week": 17, "team": "Sunderland", "position": 6, "points": 27, "played": 17, "won": 7, "drawn": 6, "lost": 4, "gf": 19, "ga": 17, "gd": 2}, {"week": 17, "team": "Manchester Utd", "position": 7, "points": 26, "played": 17, "won": 7, "drawn": 5, "lost": 5, "gf": 31, "ga": 28, "gd": 3}, {"week": 17, "team": "Crystal Palace", "position": 8, "points": 26, "played": 17, "won": 7, "drawn": 5, "lost": 5, "gf": 21, "ga": 19, "gd": 2}, {"week": 17, "team": "Brighton", "position": 9, "points": 24, "played": 17, "won": 6, "drawn": 6, "lost": 5, "gf": 25, "ga": 23, "gd": 2}, {"week": 17, "team": "Everton", "position": 10, "points": 24, "played": 17, "won": 7, "drawn": 3, "lost": 7, "gf": 18, "ga": 20, "gd": -2}, {"week": 17, "team": "Newcastle United", "position": 11, "points": 23, "played": 17, "won": 6, "drawn": 5, "lost": 6, "gf": 23, "ga": 22, "gd": 1}, {"week": 17, "team": "Brentford", "position": 12, "points": 23, "played": 17, "won": 7, "drawn": 2, "lost": 8, "gf": 24, "ga": 25, "gd": -1}, {"week": 17, "team": "Fulham", "position": 13, "points": 23, "played": 17, "won": 7, "drawn": 2, "lost": 8, "gf": 24, "ga": 26, "gd": -2}, {"week": 17, "team": "Tottenham Hotspur", "position": 14, "points": 22, "played": 17, "won": 6, "drawn": 4, "lost": 7, "gf": 26, "ga": 23, "gd": 3}, {"week": 17, "team": "Bournemouth", "position": 15, "points": 22, "played": 17, "won": 5, "drawn": 7, "lost": 5, "gf": 26, "ga": 29, "gd": -3}, {"week": 17, "team": "Leeds United", "position": 16, "points": 19, "played": 17, "won": 5, "drawn": 4, "lost": 8, "gf": 24, "ga": 31, "gd": -7}, {"week": 17, "team": "Nottingham Forest", "position": 17, "points": 18, "played": 17, "won": 5, "drawn": 3, "lost": 9, "gf": 17, "ga": 26, "gd": -9}, {"week": 17, "team": "West Ham United", "position": 18, "points": 13, "played": 17, "won": 3, "drawn": 4, "lost": 10, "gf": 19, "ga": 35, "gd": -16}, {"week": 17, "team": "Burnley", "position": 19, "points": 11, "played": 17, "won": 3, "drawn": 2, "lost": 12, "gf": 19, "ga": 34, "gd": -15}, {"week": 17, "team": "Wolves", "position": 20, "points": 2, "played": 17, "won": 0, "drawn": 2, "lost": 15, "gf": 9, "ga": 37, "gd": -28}, {"week": 18, "team": "Arsenal", "position": 1, "points": 42, "played": 18, "won": 13, "drawn": 3, "lost": 2, "gf": 33, "ga": 11, "gd": 22}, {"week": 18, "team": "Manchester City", "position": 2, "points": 40, "played": 18, "won": 13, "drawn": 1, "lost": 4, "gf": 43, "ga": 17, "gd": 26}, {"week": 18, "team": "Aston Villa", "position": 3, "points": 39, "played": 18, "won": 12, "drawn": 3, "lost": 3, "gf": 29, "ga": 19, "gd": 10}, {"week": 18, "team": "Liverpool", "position": 4, "points": 32, "played": 18, "won": 10, "drawn": 2, "lost": 6, "gf": 30, "ga": 26, "gd": 4}, {"week": 18, "team": "Chelsea", "position": 5, "points": 29, "played": 18, "won": 8, "drawn": 5, "lost": 5, "gf": 30, "ga": 19, "gd": 11}, {"week": 18, "team": "Manchester Utd", "position": 6, "points": 29, "played": 18, "won": 8, "drawn": 5, "lost": 5, "gf": 32, "ga": 28, "gd": 4}, {"week": 18, "team": "Sunderland", "position": 7, "points": 28, "played": 18, "won": 7, "drawn": 7, "lost": 4, "gf": 20, "ga": 18, "gd": 2}, {"week": 18, "team": "Brentford", "position": 8, "points": 26, "played": 18, "won": 8, "drawn": 2, "lost": 8, "gf": 28, "ga": 26, "gd": 2}, {"week": 18, "team": "Crystal Palace", "position": 9, "points": 26, "played": 18, "won": 7, "drawn": 5, "lost": 6, "gf": 21, "ga": 20, "gd": 1}, {"week": 18, "team": "Fulham", "position": 10, "points": 26, "played": 18, "won": 8, "drawn": 2, "lost": 8, "gf": 25, "ga": 26, "gd": -1}, {"week": 18, "team": "Tottenham Hotspur", "position": 11, "points": 25, "played": 18, "won": 7, "drawn": 4, "lost": 7, "gf": 27, "ga": 23, "gd": 4}, {"week": 18, "team": "Everton", "position": 12, "points": 25, "played": 18, "won": 7, "drawn": 4, "lost": 7, "gf": 18, "ga": 20, "gd": -2}, {"week": 18, "team": "Brighton", "position": 13, "points": 24, "played": 18, "won": 6, "drawn": 6, "lost": 6, "gf": 26, "ga": 25, "gd": 1}, {"week": 18, "team": "Newcastle United", "position": 14, "points": 23, "played": 18, "won": 6, "drawn": 5, "lost": 7, "gf": 23, "ga": 23, "gd": 0}, {"week": 18, "team": "Bournemouth", "position": 15, "points": 22, "played": 18, "won": 5, "drawn": 7, "lost": 6, "gf": 27, "ga": 33, "gd": -6}, {"week": 18, "team": "Leeds United", "position": 16, "points": 20, "played": 18, "won": 5, "drawn": 5, "lost": 8, "gf": 25, "ga": 32, "gd": -7}, {"week": 18, "team": "Nottingham Forest", "position": 17, "points": 18, "played": 18, "won": 5, "drawn": 3, "lost": 10, "gf": 18, "ga": 28, "gd": -10}, {"week": 18, "team": "West Ham United", "position": 18, "points": 13, "played": 18, "won": 3, "drawn": 4, "lost": 11, "gf": 19, "ga": 36, "gd": -17}, {"week": 18, "team": "Burnley", "position": 19, "points": 12, "played": 18, "won": 3, "drawn": 3, "lost": 12, "gf": 19, "ga": 34, "gd": -15}, {"week": 18, "team": "Wolves", "position": 20, "points": 2, "played": 18, "won": 0, "drawn": 2, "lost": 16, "gf": 10, "ga": 39, "gd": -29}, {"week": 19, "team": "Arsenal", "position": 1, "points": 45, "played": 19, "won": 14, "drawn": 3, "lost": 2, "gf": 37, "ga": 12, "gd": 25}, {"week": 19, "team": "Manchester City", "position": 2, "points": 41, "played": 19, "won": 13, "drawn": 2, "lost": 4, "gf": 43, "ga": 17, "gd": 26}, {"week": 19, "team": "Aston Villa", "position": 3, "points": 39, "played": 19, "won": 12, "drawn": 3, "lost": 4, "gf": 30, "ga": 23, "gd": 7}, {"week": 19, "team": "Liverpool", "position": 4, "points": 33, "played": 19, "won": 10, "drawn": 3, "lost": 6, "gf": 30, "ga": 26, "gd": 4}, {"week": 19, "team": "Chelsea", "position": 5, "points": 30, "played": 19, "won": 8, "drawn": 6, "lost": 5, "gf": 32, "ga": 21, "gd": 11}, {"week": 19, "team": "Manchester Utd", "position": 6, "points": 30, "played": 19, "won": 8, "drawn": 6, "lost": 5, "gf": 33, "ga": 29, "gd": 4}, {"week": 19, "team": "Sunderland", "position": 7, "points": 29, "played": 19, "won": 7, "drawn": 8, "lost": 4, "gf": 20, "ga": 18, "gd": 2}, {"week": 19, "team": "Everton", "position": 8, "points": 28, "played": 19, "won": 8, "drawn": 4, "lost": 7, "gf": 20, "ga": 20, "gd": 0}, {"week": 19, "team": "Brentford", "position": 9, "points": 27, "played": 19, "won": 8, "drawn": 3, "lost": 8, "gf": 28, "ga": 26, "gd": 2}, {"week": 19, "team": "Crystal Palace", "position": 10, "points": 27, "played": 19, "won": 7, "drawn": 6, "lost": 6, "gf": 22, "ga": 21, "gd": 1}, {"week": 19, "team": "Fulham", "position": 11, "points": 27, "played": 19, "won": 8, "drawn": 3, "lost": 8, "gf": 26, "ga": 27, "gd": -1}, {"week": 19, "team": "Tottenham Hotspur", "position": 12, "points": 26, "played": 19, "won": 7, "drawn": 5, "lost": 7, "gf": 27, "ga": 23, "gd": 4}, {"week": 19, "team": "Newcastle United", "position": 13, "points": 26, "played": 19, "won": 7, "drawn": 5, "lost": 7, "gf": 26, "ga": 24, "gd": 2}, {"week": 19, "team": "Brighton", "position": 14, "points": 25, "played": 19, "won": 6, "drawn": 7, "lost": 6, "gf": 28, "ga": 27, "gd": 1}, {"week": 19, "team": "Bournemouth", "position": 15, "points": 23, "played": 19, "won": 5, "drawn": 8, "lost": 6, "gf": 29, "ga": 35, "gd": -6}, {"week": 19, "team": "Leeds United", "position": 16, "points": 21, "played": 19, "won": 5, "drawn": 6, "lost": 8, "gf": 25, "ga": 32, "gd": -7}, {"week": 19, "team": "Nottingham Forest", "position": 17, "points": 18, "played": 19, "won": 5, "drawn": 3, "lost": 11, "gf": 18, "ga": 30, "gd": -12}, {"week": 19, "team": "West Ham United", "position": 18, "points": 14, "played": 19, "won": 3, "drawn": 5, "lost": 11, "gf": 21, "ga": 38, "gd": -17}, {"week": 19, "team": "Burnley", "position": 19, "points": 12, "played": 19, "won": 3, "drawn": 3, "lost": 13, "gf": 20, "ga": 37, "gd": -17}, {"week": 19, "team": "Wolves", "position": 20, "points": 3, "played": 19, "won": 0, "drawn": 3, "lost": 16, "gf": 11, "ga": 40, "gd": -29}, {"week": 20, "team": "Arsenal", "position": 1, "points": 48, "played": 20, "won": 15, "drawn": 3, "lost": 2, "gf": 40, "ga": 14, "gd": 26}, {"week": 20, "team": "Manchester City", "position": 2, "points": 42, "played": 20, "won": 13, "drawn": 3, "lost": 4, "gf": 44, "ga": 18, "gd": 26}, {"week": 20, "team": "Aston Villa", "position": 3, "points": 42, "played": 20, "won": 13, "drawn": 3, "lost": 4, "gf": 33, "ga": 24, "gd": 9}, {"week": 20, "team": "Liverpool", "position": 4, "points": 34, "played": 20, "won": 10, "drawn": 4, "lost": 6, "gf": 32, "ga": 28, "gd": 4}, {"week": 20, "team": "Chelsea", "position": 5, "points": 31, "played": 20, "won": 8, "drawn": 7, "lost": 5, "gf": 33, "ga": 22, "gd": 11}, {"week": 20, "team": "Manchester Utd", "position": 6, "points": 31, "played": 20, "won": 8, "drawn": 7, "lost": 5, "gf": 34, "ga": 30, "gd": 4}, {"week": 20, "team": "Brentford", "position": 7, "points": 30, "played": 20, "won": 9, "drawn": 3, "lost": 8, "gf": 32, "ga": 28, "gd": 4}, {"week": 20, "team": "Sunderland", "position": 8, "points": 30, "played": 20, "won": 7, "drawn": 9, "lost": 4, "gf": 21, "ga": 19, "gd": 2}, {"week": 20, "team": "Newcastle United", "position": 9, "points": 29, "played": 20, "won": 8, "drawn": 5, "lost": 7, "gf": 28, "ga": 24, "gd": 4}, {"week": 20, "team": "Brighton", "position": 10, "points": 28, "played": 20, "won": 7, "drawn": 7, "lost": 6, "gf": 30, "ga": 27, "gd": 3}, {"week": 20, "team": "Fulham", "position": 11, "points": 28, "played": 20, "won": 8, "drawn": 4, "lost": 8, "gf": 28, "ga": 29, "gd": -1}, {"week": 20, "team": "Everton", "position": 12, "points": 28, "played": 20, "won": 8, "drawn": 4, "lost": 8, "gf": 22, "ga": 24, "gd": -2}, {"week": 20, "team": "Tottenham Hotspur", "position": 13, "points": 27, "played": 20, "won": 7, "drawn": 6, "lost": 7, "gf": 28, "ga": 24, "gd": 4}, {"week": 20, "team": "Crystal Palace", "position": 14, "points": 27, "played": 20, "won": 7, "drawn": 6, "lost": 7, "gf": 22, "ga": 23, "gd": -1}, {"week": 20, "team": "Bournemouth", "position": 15, "points": 23, "played": 20, "won": 5, "drawn": 8, "lost": 7, "gf": 31, "ga": 38, "gd": -7}, {"week": 20, "team": "Leeds United", "position": 16, "points": 22, "played": 20, "won": 5, "drawn": 7, "lost": 8, "gf": 26, "ga": 33, "gd": -7}, {"week": 20, "team": "Nottingham Forest", "position": 17, "points": 18, "played": 20, "won": 5, "drawn": 3, "lost": 12, "gf": 19, "ga": 33, "gd": -14}, {"week": 20, "team": "West Ham United", "position": 18, "points": 14, "played": 20, "won": 3, "drawn": 5, "lost": 12, "gf": 21, "ga": 41, "gd": -20}, {"week": 20, "team": "Burnley", "position": 19, "points": 12, "played": 20, "won": 3, "drawn": 3, "lost": 14, "gf": 20, "ga": 39, "gd": -19}, {"week": 20, "team": "Wolves", "position": 20, "points": 6, "played": 20, "won": 1, "drawn": 3, "lost": 16, "gf": 14, "ga": 40, "gd": -26}, {"week": 21, "team": "Arsenal", "position": 1, "points": 49, "played": 21, "won": 15, "drawn": 4, "lost": 2, "gf": 40, "ga": 14, "gd": 26}, {"week": 21, "team": "Manchester City", "position": 2, "points": 43, "played": 21, "won": 13, "drawn": 4, "lost": 4, "gf": 45, "ga": 19, "gd": 26}, {"week": 21, "team": "Aston Villa", "position": 3, "points": 43, "played": 21, "won": 13, "drawn": 4, "lost": 4, "gf": 33, "ga": 24, "gd": 9}, {"week": 21, "team": "Liverpool", "position": 4, "points": 35, "played": 21, "won": 10, "drawn": 5, "lost": 6, "gf": 32, "ga": 28, "gd": 4}, {"week": 21, "team": "Brentford", "position": 5, "points": 33, "played": 21, "won": 10, "drawn": 3, "lost": 8, "gf": 35, "ga": 28, "gd": 7}, {"week": 21, "team": "Newcastle United", "position": 6, "points": 32, "played": 21, "won": 9, "drawn": 5, "lost": 7, "gf": 32, "ga": 27, "gd": 5}, {"week": 21, "team": "Manchester Utd", "position": 7, "points": 32, "played": 21, "won": 8, "drawn": 8, "lost": 5, "gf": 36, "ga": 32, "gd": 4}, {"week": 21, "team": "Chelsea", "position": 8, "points": 31, "played": 21, "won": 8, "drawn": 7, "lost": 6, "gf": 34, "ga": 24, "gd": 10}, {"week": 21, "team": "Fulham", "position": 9, "points": 31, "played": 21, "won": 9, "drawn": 4, "lost": 8, "gf": 30, "ga": 30, "gd": 0}, {"week": 21, "team": "Sunderland", "position": 10, "points": 30, "played": 21, "won": 7, "drawn": 9, "lost": 5, "gf": 21, "ga": 22, "gd": -1}, {"week": 21, "team": "Brighton", "position": 11, "points": 29, "played": 21, "won": 7, "drawn": 8, "lost": 6, "gf": 31, "ga": 28, "gd": 3}, {"week": 21, "team": "Everton", "position": 12, "points": 29, "played": 21, "won": 8, "drawn": 5, "lost": 8, "gf": 23, "ga": 25, "gd": -2}, {"week": 21, "team": "Crystal Palace", "position": 13, "points": 28, "played": 21, "won": 7, "drawn": 7, "lost": 7, "gf": 22, "ga": 23, "gd": -1}, {"week": 21, "team": "Tottenham Hotspur", "position": 14, "points": 27, "played": 21, "won": 7, "drawn": 6, "lost": 8, "gf": 30, "ga": 27, "gd": 3}, {"week": 21, "team": "Bournemouth", "position": 15, "points": 26, "played": 21, "won": 6, "drawn": 8, "lost": 7, "gf": 34, "ga": 40, "gd": -6}, {"week": 21, "team": "Leeds United", "position": 16, "points": 22, "played": 21, "won": 5, "drawn": 7, "lost": 9, "gf": 29, "ga": 37, "gd": -8}, {"week": 21, "team": "Nottingham Forest", "position": 17, "points": 21, "played": 21, "won": 6, "drawn": 3, "lost": 12, "gf": 21, "ga": 34, "gd": -13}, {"week": 21, "team": "West Ham United", "position": 18, "points": 14, "played": 21, "won": 3, "drawn": 5, "lost": 13, "gf": 22, "ga": 43, "gd": -21}, {"week": 21, "team": "Burnley", "position": 19, "points": 13, "played": 21, "won": 3, "drawn": 4, "lost": 14, "gf": 22, "ga": 41, "gd": -19}, {"week": 21, "team": "Wolves", "position": 20, "points": 7, "played": 21, "won": 1, "drawn": 4, "lost": 16, "gf": 15, "ga": 41, "gd": -26}, {"week": 22, "team": "Arsenal", "position": 1, "points": 50, "played": 22, "won": 15, "drawn": 5, "lost": 2, "gf": 40, "ga": 14, "gd": 26}, {"week": 22, "team": "Manchester City", "position": 2, "points": 43, "played": 22, "won": 13, "drawn": 4, "lost": 5, "gf": 45, "ga": 21, "gd": 24}, {"week": 22, "team": "Aston Villa", "position": 3, "points": 43, "played": 22, "won": 13, "drawn": 4, "lost": 5, "gf": 33, "ga": 25, "gd": 8}, {"week": 22, "team": "Liverpool", "position": 4, "points": 36, "played": 22, "won": 10, "drawn": 6, "lost": 6, "gf": 33, "ga": 29, "gd": 4}, {"week": 22, "team": "Manchester Utd", "position": 5, "points": 35, "played": 22, "won": 9, "drawn": 8, "lost": 5, "gf": 38, "ga": 32, "gd": 6}, {"week": 22, "team": "Chelsea", "position": 6, "points": 34, "played": 22, "won": 9, "drawn": 7, "lost": 6, "gf": 36, "ga": 24, "gd": 12}, {"week": 22, "team": "Brentford", "position": 7, "points": 33, "played": 22, "won": 10, "drawn": 3, "lost": 9, "gf": 35, "ga": 30, "gd": 5}, {"week": 22, "team": "Newcastle United", "position": 8, "points": 33, "played": 22, "won": 9, "drawn": 6, "lost": 7, "gf": 32, "ga": 27, "gd": 5}, {"week": 22, "team": "Sunderland", "position": 9, "points": 33, "played": 22, "won": 8, "drawn": 9, "lost": 5, "gf": 23, "ga": 23, "gd": 0}, {"week": 22, "team": "Everton", "position": 10, "points": 32, "played": 22, "won": 9, "drawn": 5, "lost": 8, "gf": 24, "ga": 25, "gd": -1}, {"week": 22, "team": "Fulham", "position": 11, "points": 31, "played": 22, "won": 9, "drawn": 4, "lost": 9, "gf": 30, "ga": 31, "gd": -1}, {"week": 22, "team": "Brighton", "position": 12, "points": 30, "played": 22, "won": 7, "drawn": 9, "lost": 6, "gf": 32, "ga": 29, "gd": 3}, {"week": 22, "team": "Crystal Palace", "position": 13, "points": 28, "played": 22, "won": 7, "drawn": 7, "lost": 8, "gf": 23, "ga": 25, "gd": -2}, {"week": 22, "team": "Tottenham Hotspur", "position": 14, "points": 27, "played": 22, "won": 7, "drawn": 6, "lost": 9, "gf": 31, "ga": 29, "gd": 2}, {"week": 22, "team": "Bournemouth", "position": 15, "points": 27, "played": 22, "won": 6, "drawn": 9, "lost": 7, "gf": 35, "ga": 41, "gd": -6}, {"week": 22, "team": "Leeds United", "position": 16, "points": 25, "played": 22, "won": 6, "drawn": 7, "lost": 9, "gf": 30, "ga": 37, "gd": -7}, {"week": 22, "team": "Nottingham Forest", "position": 17, "points": 22, "played": 22, "won": 6, "drawn": 4, "lost": 12, "gf": 21, "ga": 34, "gd": -13}, {"week": 22, "team": "West Ham United", "position": 18, "points": 17, "played": 22, "won": 4, "drawn": 5, "lost": 13, "gf": 24, "ga": 44, "gd": -20}, {"week": 22, "team": "Burnley", "position": 19, "points": 14, "played": 22, "won": 3, "drawn": 5, "lost": 14, "gf": 23, "ga": 42, "gd": -19}, {"week": 22, "team": "Wolves", "position": 20, "points": 8, "played": 22, "won": 1, "drawn": 5, "lost": 16, "gf": 15, "ga": 41, "gd": -26}, {"week": 23, "team": "Arsenal", "position": 1, "points": 50, "played": 23, "won": 15, "drawn": 5, "lost": 3, "gf": 42, "ga": 17, "gd": 25}, {"week": 23, "team": "Manchester City", "position": 2, "points": 46, "played": 23, "won": 14, "drawn": 4, "lost": 5, "gf": 47, "ga": 21, "gd": 26}, {"week": 23, "team": "Aston Villa", "position": 3, "points": 46, "played": 23, "won": 14, "drawn": 4, "lost": 5, "gf": 35, "ga": 25, "gd": 10}, {"week": 23, "team": "Manchester Utd", "position": 4, "points": 38, "played": 23, "won": 10, "drawn": 8, "lost": 5, "gf": 41, "ga": 34, "gd": 7}, {"week": 23, "team": "Chelsea", "position": 5, "points": 37, "played": 23, "won": 10, "drawn": 7, "lost": 6, "gf": 39, "ga": 25, "gd": 14}, {"week": 23, "team": "Liverpool", "position": 6, "points": 36, "played": 23, "won": 10, "drawn": 6, "lost": 7, "gf": 35, "ga": 32, "gd": 3}, {"week": 23, "team": "Fulham", "position": 7, "points": 34, "played": 23, "won": 10, "drawn": 4, "lost": 9, "gf": 32, "ga": 32, "gd": 0}, {"week": 23, "team": "Brentford", "position": 8, "points": 33, "played": 23, "won": 10, "drawn": 3, "lost": 10, "gf": 35, "ga": 32, "gd": 3}, {"week": 23, "team": "Newcastle United", "position": 9, "points": 33, "played": 23, "won": 9, "drawn": 6, "lost": 8, "gf": 32, "ga": 29, "gd": 3}, {"week": 23, "team": "Everton", "position": 10, "points": 33, "played": 23, "won": 9, "drawn": 6, "lost": 8, "gf": 25, "ga": 26, "gd": -1}, {"week": 23, "team": "Sunderland", "position": 11, "points": 33, "played": 23, "won": 8, "drawn": 9, "lost": 6, "gf": 24, "ga": 26, "gd": -2}, {"week": 23, "team": "Brighton", "position": 12, "points": 30, "played": 23, "won": 7, "drawn": 9, "lost": 7, "gf": 33, "ga": 31, "gd": 2}, {"week": 23, "team": "Bournemouth", "position": 13, "points": 30, "played": 23, "won": 7, "drawn": 9, "lost": 7, "gf": 38, "ga": 43, "gd": -5}, {"week": 23, "team": "Tottenham Hotspur", "position": 14, "points": 28, "played": 23, "won": 7, "drawn": 7, "lost": 9, "gf": 33, "ga": 31, "gd": 2}, {"week": 23, "team": "Crystal Palace", "position": 15, "points": 28, "played": 23, "won": 7, "drawn": 7, "lost": 9, "gf": 24, "ga": 28, "gd": -4}, {"week": 23, "team": "Leeds United", "position": 16, "points": 26, "played": 23, "won": 6, "drawn": 8, "lost": 9, "gf": 31, "ga": 38, "gd": -7}, {"week": 23, "team": "Nottingham Forest", "position": 17, "points": 25, "played": 23, "won": 7, "drawn": 4, "lost": 12, "gf": 23, "ga": 34, "gd": -11}, {"week": 23, "team": "West Ham United", "position": 18, "points": 20, "played": 23, "won": 5, "drawn": 5, "lost": 13, "gf": 27, "ga": 45, "gd": -18}, {"week": 23, "team": "Burnley", "position": 19, "points": 15, "played": 23, "won": 3, "drawn": 6, "lost": 14, "gf": 25, "ga": 44, "gd": -19}, {"week": 23, "team": "Wolves", "position": 20, "points": 8, "played": 23, "won": 1, "drawn": 5, "lost": 17, "gf": 15, "ga": 43, "gd": -28}, {"week": 24, "team": "Arsenal", "position": 1, "points": 53, "played": 24, "won": 16, "drawn": 5, "lost": 3, "gf": 46, "ga": 17, "gd": 29}, {"week": 24, "team": "Manchester City", "position": 2, "points": 47, "played": 24, "won": 14, "drawn": 5, "lost": 5, "gf": 49, "ga": 23, "gd": 26}, {"week": 24, "team": "Aston Villa", "position": 3, "points": 46, "played": 24, "won": 14, "drawn": 4, "lost": 6, "gf": 35, "ga": 26, "gd": 9}, {"week": 24, "team": "Manchester Utd", "position": 4, "points": 41, "played": 24, "won": 11, "drawn": 8, "lost": 5, "gf": 44, "ga": 36, "gd": 8}, {"week": 24, "team": "Chelsea", "position": 5, "points": 40, "played": 24, "won": 11, "drawn": 7, "lost": 6, "gf": 42, "ga": 27, "gd": 15}, {"week": 24, "team": "Liverpool", "position": 6, "points": 39, "played": 24, "won": 11, "drawn": 6, "lost": 7, "gf": 39, "ga": 33, "gd": 6}, {"week": 24, "team": "Brentford", "position": 7, "points": 36, "played": 24, "won": 11, "drawn": 3, "lost": 10, "gf": 36, "ga": 32, "gd": 4}, {"week": 24, "team": "Sunderland", "position": 8, "points": 36, "played": 24, "won": 9, "drawn": 9, "lost": 6, "gf": 27, "ga": 26, "gd": 1}, {"week": 24, "team": "Fulham", "position": 9, "points": 34, "played": 24, "won": 10, "drawn": 4, "lost": 10, "gf": 34, "ga": 35, "gd": -1}, {"week": 24, "team": "Everton", "position": 10, "points": 34, "played": 24, "won": 9, "drawn": 7, "lost": 8, "gf": 26, "ga": 27, "gd": -1}, {"week": 24, "team": "Newcastle United", "position": 11, "points": 33, "played": 24, "won": 9, "drawn": 6, "lost": 9, "gf": 33, "ga": 33, "gd": 0}, {"week": 24, "team": "Bournemouth", "position": 12, "points": 33, "played": 24, "won": 8, "drawn": 9, "lost": 7, "gf": 40, "ga": 43, "gd": -3}, {"week": 24, "team": "Brighton", "position": 13, "points": 31, "played": 24, "won": 7, "drawn": 10, "lost": 7, "gf": 34, "ga": 32, "gd": 2}, {"week": 24, "team": "Tottenham Hotspur", "position": 14, "points": 29, "played": 24, "won": 7, "drawn": 8, "lost": 9, "gf": 35, "ga": 33, "gd": 2}, {"week": 24, "team": "Crystal Palace", "position": 15, "points": 29, "played": 24, "won": 7, "drawn": 8, "lost": 9, "gf": 25, "ga": 29, "gd": -4}, {"week": 24, "team": "Leeds United", "position": 16, "points": 26, "played": 24, "won": 6, "drawn": 8, "lost": 10, "gf": 31, "ga": 42, "gd": -11}, {"week": 24, "team": "Nottingham Forest", "position": 17, "points": 26, "played": 24, "won": 7, "drawn": 5, "lost": 12, "gf": 24, "ga": 35, "gd": -11}, {"week": 24, "team": "West Ham United", "position": 18, "points": 20, "played": 24, "won": 5, "drawn": 5, "lost": 14, "gf": 29, "ga": 48, "gd": -19}, {"week": 24, "team": "Burnley", "position": 19, "points": 15, "played": 24, "won": 3, "drawn": 6, "lost": 15, "gf": 25, "ga": 47, "gd": -22}, {"week": 24, "team": "Wolves", "position": 20, "points": 8, "played": 24, "won": 1, "drawn": 5, "lost": 18, "gf": 15, "ga": 45, "gd": -30}, {"week": 25, "team": "Arsenal", "position": 1, "points": 56, "played": 25, "won": 17, "drawn": 5, "lost": 3, "gf": 49, "ga": 17, "gd": 32}, {"week": 25, "team": "Manchester City", "position": 2, "points": 50, "played": 25, "won": 15, "drawn": 5, "lost": 5, "gf": 51, "ga": 24, "gd": 27}, {"week": 25, "team": "Aston Villa", "position": 3, "points": 47, "played": 25, "won": 14, "drawn": 5, "lost": 6, "gf": 36, "ga": 27, "gd": 9}, {"week": 25, "team": "Manchester Utd", "position": 4, "points": 44, "played": 25, "won": 12, "drawn": 8, "lost": 5, "gf": 46, "ga": 36, "gd": 10}, {"week": 25, "team": "Chelsea", "position": 5, "points": 43, "played": 25, "won": 12, "drawn": 7, "lost": 6, "gf": 45, "ga": 28, "gd": 17}, {"week": 25, "team": "Liverpool", "position": 6, "points": 39, "played": 25, "won": 11, "drawn": 6, "lost": 8, "gf": 40, "ga": 35, "gd": 5}, {"week": 25, "team": "Brentford", "position": 7, "points": 39, "played": 25, "won": 12, "drawn": 3, "lost": 10, "gf": 39, "ga": 34, "gd": 5}, {"week": 25, "team": "Everton", "position": 8, "points": 37, "played": 25, "won": 10, "drawn": 7, "lost": 8, "gf": 28, "ga": 28, "gd": 0}, {"week": 25, "team": "Sunderland", "position": 9, "points": 36, "played": 25, "won": 9, "drawn": 9, "lost": 7, "gf": 27, "ga": 29, "gd": -2}, {"week": 25, "team": "Fulham", "position": 10, "points": 34, "played": 25, "won": 10, "drawn": 4, "lost": 11, "gf": 35, "ga": 37, "gd": -2}, {"week": 25, "team": "Bournemouth", "position": 11, "points": 34, "played": 25, "won": 8, "drawn": 10, "lost": 7, "gf": 41, "ga": 44, "gd": -3}, {"week": 25, "team": "Newcastle United", "position": 12, "points": 33, "played": 25, "won": 9, "drawn": 6, "lost": 10, "gf": 35, "ga": 36, "gd": -1}, {"week": 25, "team": "Crystal Palace", "position": 13, "points": 32, "played": 25, "won": 8, "drawn": 8, "lost": 9, "gf": 26, "ga": 29, "gd": -3}, {"week": 25, "team": "Brighton", "position": 14, "points": 31, "played": 25, "won": 7, "drawn": 10, "lost": 8, "gf": 34, "ga": 33, "gd": 1}, {"week": 25, "team": "Tottenham Hotspur", "position": 15, "points": 29, "played": 25, "won": 7, "drawn": 8, "lost": 10, "gf": 35, "ga": 35, "gd": 0}, {"week": 25, "team": "Leeds United", "position": 16, "points": 29, "played": 25, "won": 7, "drawn": 8, "lost": 10, "gf": 34, "ga": 43, "gd": -9}, {"week": 25, "team": "Nottingham Forest", "position": 17, "points": 26, "played": 25, "won": 7, "drawn": 5, "lost": 13, "gf": 25, "ga": 38, "gd": -13}, {"week": 25, "team": "West Ham United", "position": 18, "points": 23, "played": 25, "won": 6, "drawn": 5, "lost": 14, "gf": 31, "ga": 48, "gd": -17}, {"week": 25, "team": "Burnley", "position": 19, "points": 15, "played": 25, "won": 3, "drawn": 6, "lost": 16, "gf": 25, "ga": 49, "gd": -24}, {"week": 25, "team": "Wolves", "position": 20, "points": 8, "played": 25, "won": 1, "drawn": 5, "lost": 19, "gf": 16, "ga": 48, "gd": -32}, {"week": 26, "team": "Arsenal", "position": 1, "points": 57, "played": 26, "won": 17, "drawn": 6, "lost": 3, "gf": 50, "ga": 18, "gd": 32}, {"week": 26, "team": "Manchester City", "position": 2, "points": 53, "played": 26, "won": 16, "drawn": 5, "lost": 5, "gf": 54, "ga": 24, "gd": 30}, {"week": 26, "team": "Aston Villa", "position": 3, "points": 50, "played": 26, "won": 15, "drawn": 5, "lost": 6, "gf": 37, "ga": 27, "gd": 10}, {"week": 26, "team": "Manchester Utd", "position": 4, "points": 45, "played": 26, "won": 12, "drawn": 9, "lost": 5, "gf": 47, "ga": 37, "gd": 10}, {"week": 26, "team": "Chelsea", "position": 5, "points": 44, "played": 26, "won": 12, "drawn": 8, "lost": 6, "gf": 47, "ga": 30, "gd": 17}, {"week": 26, "team": "Liverpool", "position": 6, "points": 42, "played": 26, "won": 12, "drawn": 6, "lost": 8, "gf": 41, "ga": 35, "gd": 6}, {"week": 26, "team": "Brentford", "position": 7, "points": 40, "played": 26, "won": 12, "drawn": 4, "lost": 10, "gf": 40, "ga": 35, "gd": 5}, {"week": 26, "team": "Everton", "position": 8, "points": 37, "played": 26, "won": 10, "drawn": 7, "lost": 9, "gf": 29, "ga": 30, "gd": -1}, {"week": 26, "team": "Bournemouth", "position": 9, "points": 37, "played": 26, "won": 9, "drawn": 10, "lost": 7, "gf": 43, "ga": 45, "gd": -2}, {"week": 26, "team": "Newcastle United", "position": 10, "points": 36, "played": 26, "won": 10, "drawn": 6, "lost": 10, "gf": 37, "ga": 37, "gd": 0}, {"week": 26, "team": "Sunderland", "position": 11, "points": 36, "played": 26, "won": 9, "drawn": 9, "lost": 8, "gf": 27, "ga": 30, "gd": -3}, {"week": 26, "team": "Fulham", "position": 12, "points": 34, "played": 26, "won": 10, "drawn": 4, "lost": 12, "gf": 35, "ga": 40, "gd": -5}, {"week": 26, "team": "Crystal Palace", "position": 13, "points": 32, "played": 26, "won": 8, "drawn": 8, "lost": 10, "gf": 28, "ga": 32, "gd": -4}, {"week": 26, "team": "Brighton", "position": 14, "points": 31, "played": 26, "won": 7, "drawn": 10, "lost": 9, "gf": 34, "ga": 34, "gd": 0}, {"week": 26, "team": "Leeds United", "position": 15, "points": 30, "played": 26, "won": 7, "drawn": 9, "lost": 10, "gf": 36, "ga": 45, "gd": -9}, {"week": 26, "team": "Tottenham Hotspur", "position": 16, "points": 29, "played": 26, "won": 7, "drawn": 8, "lost": 11, "gf": 36, "ga": 37, "gd": -1}, {"week": 26, "team": "Nottingham Forest", "position": 17, "points": 27, "played": 26, "won": 7, "drawn": 6, "lost": 13, "gf": 25, "ga": 38, "gd": -13}, {"week": 26, "team": "West Ham United", "position": 18, "points": 24, "played": 26, "won": 6, "drawn": 6, "lost": 14, "gf": 32, "ga": 49, "gd": -17}, {"week": 26, "team": "Burnley", "position": 19, "points": 18, "played": 26, "won": 4, "drawn": 6, "lost": 16, "gf": 28, "ga": 51, "gd": -23}, {"week": 26, "team": "Wolves", "position": 20, "points": 9, "played": 26, "won": 1, "drawn": 6, "lost": 19, "gf": 16, "ga": 48, "gd": -32}, {"week": 27, "team": "Arsenal", "position": 1, "points": 60, "played": 27, "won": 18, "drawn": 6, "lost": 3, "gf": 54, "ga": 19, "gd": 35}, {"week": 27, "team": "Manchester City", "position": 2, "points": 56, "played": 27, "won": 17, "drawn": 5, "lost": 5, "gf": 56, "ga": 25, "gd": 31}, {"week": 27, "team": "Aston Villa", "position": 3, "points": 51, "played": 27, "won": 15, "drawn": 6, "lost": 6, "gf": 38, "ga": 28, "gd": 10}, {"week": 27, "team": "Manchester Utd", "position": 4, "points": 48, "played": 27, "won": 13, "drawn": 9, "lost": 5, "gf": 48, "ga": 37, "gd": 11}, {"week": 27, "team": "Chelsea", "position": 5, "points": 45, "played": 27, "won": 12, "drawn": 9, "lost": 6, "gf": 48, "ga": 31, "gd": 17}, {"week": 27, "team": "Liverpool", "position": 6, "points": 45, "played": 27, "won": 13, "drawn": 6, "lost": 8, "gf": 42, "ga": 35, "gd": 7}, {"week": 27, "team": "Brentford", "position": 7, "points": 40, "played": 27, "won": 12, "drawn": 4, "lost": 11, "gf": 40, "ga": 37, "gd": 3}, {"week": 27, "team": "Bournemouth", "position": 8, "points": 38, "played": 27, "won": 9, "drawn": 11, "lost": 7, "gf": 43, "ga": 45, "gd": -2}, {"week": 27, "team": "Everton", "position": 9, "points": 37, "played": 27, "won": 10, "drawn": 7, "lost": 10, "gf": 29, "ga": 31, "gd": -2}, {"week": 27, "team": "Fulham", "position": 10, "points": 37, "played": 27, "won": 11, "drawn": 4, "lost": 12, "gf": 38, "ga": 41, "gd": -3}, {"week": 27, "team": "Newcastle United", "position": 11, "points": 36, "played": 27, "won": 10, "drawn": 6, "lost": 11, "gf": 38, "ga": 39, "gd": -1}, {"week": 27, "team": "Sunderland", "position": 12, "points": 36, "played": 27, "won": 9, "drawn": 9, "lost": 9, "gf": 28, "ga": 33, "gd": -5}, {"week": 27, "team": "Crystal Palace", "position": 13, "points": 35, "played": 27, "won": 9, "drawn": 8, "lost": 10, "gf": 29, "ga": 32, "gd": -3}, {"week": 27, "team": "Brighton", "position": 14, "points": 34, "played": 27, "won": 8, "drawn": 10, "lost": 9, "gf": 36, "ga": 34, "gd": 2}, {"week": 27, "team": "Leeds United", "position": 15, "points": 31, "played": 27, "won": 7, "drawn": 10, "lost": 10, "gf": 37, "ga": 46, "gd": -9}, {"week": 27, "team": "Tottenham Hotspur", "position": 16, "points": 29, "played": 27, "won": 7, "drawn": 8, "lost": 12, "gf": 37, "ga": 41, "gd": -4}, {"week": 27, "team": "Nottingham Forest", "position": 17, "points": 27, "played": 27, "won": 7, "drawn": 6, "lost": 14, "gf": 25, "ga": 39, "gd": -14}, {"week": 27, "team": "West Ham United", "position": 18, "points": 25, "played": 27, "won": 6, "drawn": 7, "lost": 14, "gf": 32, "ga": 49, "gd": -17}, {"week": 27, "team": "Burnley", "position": 19, "points": 19, "played": 27, "won": 4, "drawn": 7, "lost": 16, "gf": 29, "ga": 52, "gd": -23}, {"week": 27, "team": "Wolves", "position": 20, "points": 9, "played": 27, "won": 1, "drawn": 6, "lost": 20, "gf": 16, "ga": 49, "gd": -33}, {"week": 28, "team": "Arsenal", "position": 1, "points": 63, "played": 28, "won": 19, "drawn": 6, "lost": 3, "gf": 56, "ga": 20, "gd": 36}, {"week": 28, "team": "Manchester City", "position": 2, "points": 59, "played": 28, "won": 18, "drawn": 5, "lost": 5, "gf": 57, "ga": 25, "gd": 32}, {"week": 28, "team": "Manchester Utd", "position": 3, "points": 51, "played": 28, "won": 14, "drawn": 9, "lost": 5, "gf": 50, "ga": 38, "gd": 12}, {"week": 28, "team": "Aston Villa", "position": 4, "points": 51, "played": 28, "won": 15, "drawn": 6, "lost": 7, "gf": 38, "ga": 30, "gd": 8}, {"week": 28, "team": "Liverpool", "position": 5, "points": 48, "played": 28, "won": 14, "drawn": 6, "lost": 8, "gf": 47, "ga": 37, "gd": 10}, {"week": 28, "team": "Chelsea", "position": 6, "points": 45, "played": 28, "won": 12, "drawn": 9, "lost": 7, "gf": 49, "ga": 33, "gd": 16}, {"week": 28, "team": "Brentford", "position": 7, "points": 43, "played": 28, "won": 13, "drawn": 4, "lost": 11, "gf": 44, "ga": 40, "gd": 4}, {"week": 28, "team": "Everton", "position": 8, "points": 40, "played": 28, "won": 11, "drawn": 7, "lost": 10, "gf": 32, "ga": 33, "gd": -1}, {"week": 28, "team": "Fulham", "position": 9, "points": 40, "played": 28, "won": 12, "drawn": 4, "lost": 12, "gf": 40, "ga": 42, "gd": -2}, {"week": 28, "team": "Bournemouth", "position": 10, "points": 39, "played": 28, "won": 9, "drawn": 12, "lost": 7, "gf": 44, "ga": 46, "gd": -2}, {"week": 28, "team": "Brighton", "position": 11, "points": 37, "played": 28, "won": 9, "drawn": 10, "lost": 9, "gf": 38, "ga": 35, "gd": 3}, {"week": 28, "team": "Sunderland", "position": 12, "points": 37, "played": 28, "won": 9, "drawn": 10, "lost": 9, "gf": 29, "ga": 34, "gd": -5}, {"week": 28, "team": "Newcastle United", "position": 13, "points": 36, "played": 28, "won": 10, "drawn": 6, "lost": 12, "gf": 40, "ga": 42, "gd": -2}, {"week": 28, "team": "Crystal Palace", "position": 14, "points": 35, "played": 28, "won": 9, "drawn": 8, "lost": 11, "gf": 30, "ga": 34, "gd": -4}, {"week": 28, "team": "Leeds United", "position": 15, "points": 31, "played": 28, "won": 7, "drawn": 10, "lost": 11, "gf": 37, "ga": 47, "gd": -10}, {"week": 28, "team": "Tottenham Hotspur", "position": 16, "points": 29, "played": 28, "won": 7, "drawn": 8, "lost": 13, "gf": 38, "ga": 43, "gd": -5}, {"week": 28, "team": "Nottingham Forest", "position": 17, "points": 27, "played": 28, "won": 7, "drawn": 6, "lost": 15, "gf": 26, "ga": 41, "gd": -15}, {"week": 28, "team": "West Ham United", "position": 18, "points": 25, "played": 28, "won": 6, "drawn": 7, "lost": 15, "gf": 34, "ga": 54, "gd": -20}, {"week": 28, "team": "Burnley", "position": 19, "points": 19, "played": 28, "won": 4, "drawn": 7, "lost": 17, "gf": 32, "ga": 56, "gd": -24}, {"week": 28, "team": "Wolves", "position": 20, "points": 12, "played": 28, "won": 2, "drawn": 6, "lost": 20, "gf": 18, "ga": 49, "gd": -31}, {"week": 29, "team": "Arsenal", "position": 1, "points": 66, "played": 29, "won": 20, "drawn": 6, "lost": 3, "gf": 57, "ga": 20, "gd": 37}, {"week": 29, "team": "Manchester City", "position": 2, "points": 60, "played": 29, "won": 18, "drawn": 6, "lost": 5, "gf": 59, "ga": 27, "gd": 32}, {"week": 29, "team": "Manchester Utd", "position": 3, "points": 51, "played": 29, "won": 14, "drawn": 9, "lost": 6, "gf": 51, "ga": 40, "gd": 11}, {"week": 29, "team": "Aston Villa", "position": 4, "points": 51, "played": 29, "won": 15, "drawn": 6, "lost": 8, "gf": 39, "ga": 34, "gd": 5}, {"week": 29, "team": "Chelsea", "position": 5, "points": 48, "played": 29, "won": 13, "drawn": 9, "lost": 7, "gf": 53, "ga": 34, "gd": 19}, {"week": 29, "team": "Liverpool", "position": 6, "points": 48, "played": 29, "won": 14, "drawn": 6, "lost": 9, "gf": 48, "ga": 39, "gd": 9}, {"week": 29, "team": "Brentford", "position": 7, "points": 44, "played": 29, "won": 13, "drawn": 5, "lost": 11, "gf": 44, "ga": 40, "gd": 4}, {"week": 29, "team": "Everton", "position": 8, "points": 43, "played": 29, "won": 12, "drawn": 7, "lost": 10, "gf": 34, "ga": 33, "gd": 1}, {"week": 29, "team": "Bournemouth", "position": 9, "points": 40, "played": 29, "won": 9, "drawn": 13, "lost": 7, "gf": 44, "ga": 46, "gd": -2}, {"week": 29, "team": "Fulham", "position": 10, "points": 40, "played": 29, "won": 12, "drawn": 4, "lost": 13, "gf": 40, "ga": 43, "gd": -3}, {"week": 29, "team": "Sunderland", "position": 11, "points": 40, "played": 29, "won": 10, "drawn": 10, "lost": 9, "gf": 30, "ga": 34, "gd": -4}, {"week": 29, "team": "Newcastle United", "position": 12, "points": 39, "played": 29, "won": 11, "drawn": 6, "lost": 12, "gf": 42, "ga": 43, "gd": -1}, {"week": 29, "team": "Crystal Palace", "position": 13, "points": 38, "played": 29, "won": 10, "drawn": 8, "lost": 11, "gf": 33, "ga": 35, "gd": -2}, {"week": 29, "team": "Brighton", "position": 14, "points": 37, "played": 29, "won": 9, "drawn": 10, "lost": 10, "gf": 38, "ga": 36, "gd": 2}, {"week": 29, "team": "Leeds United", "position": 15, "points": 31, "played": 29, "won": 7, "drawn": 10, "lost": 12, "gf": 37, "ga": 48, "gd": -11}, {"week": 29, "team": "Tottenham Hotspur", "position": 16, "points": 29, "played": 29, "won": 7, "drawn": 8, "lost": 14, "gf": 39, "ga": 46, "gd": -7}, {"week": 29, "team": "Nottingham Forest", "position": 17, "points": 28, "played": 29, "won": 7, "drawn": 7, "lost": 15, "gf": 28, "ga": 43, "gd": -15}, {"week": 29, "team": "West Ham United", "position": 18, "points": 28, "played": 29, "won": 7, "drawn": 7, "lost": 15, "gf": 35, "ga": 54, "gd": -19}, {"week": 29, "team": "Burnley", "position": 19, "points": 19, "played": 29, "won": 4, "drawn": 7, "lost": 18, "gf": 32, "ga": 58, "gd": -26}, {"week": 29, "team": "Wolves", "position": 20, "points": 15, "played": 29, "won": 3, "drawn": 6, "lost": 20, "gf": 20, "ga": 50, "gd": -30}, {"week": 30, "team": "Arsenal", "position": 1, "points": 69, "played": 30, "won": 21, "drawn": 6, "lost": 3, "gf": 59, "ga": 20, "gd": 39}, {"week": 30, "team": "Manchester City", "position": 2, "points": 61, "played": 30, "won": 18, "drawn": 7, "lost": 5, "gf": 60, "ga": 28, "gd": 32}, {"week": 30, "team": "Manchester Utd", "position": 3, "points": 54, "played": 30, "won": 15, "drawn": 9, "lost": 6, "gf": 54, "ga": 41, "gd": 13}, {"week": 30, "team": "Aston Villa", "position": 4, "points": 51, "played": 30, "won": 15, "drawn": 6, "lost": 9, "gf": 40, "ga": 37, "gd": 3}, {"week": 30, "team": "Liverpool", "position": 5, "points": 49, "played": 30, "won": 14, "drawn": 7, "lost": 9, "gf": 49, "ga": 40, "gd": 9}, {"week": 30, "team": "Chelsea", "position": 6, "points": 48, "played": 30, "won": 13, "drawn": 9, "lost": 8, "gf": 53, "ga": 35, "gd": 18}, {"week": 30, "team": "Brentford", "position": 7, "points": 45, "played": 30, "won": 13, "drawn": 6, "lost": 11, "gf": 46, "ga": 42, "gd": 4}, {"week": 30, "team": "Everton", "position": 8, "points": 43, "played": 30, "won": 12, "drawn": 7, "lost": 11, "gf": 34, "ga": 35, "gd": -1}, {"week": 30, "team": "Newcastle United", "position": 9, "points": 42, "played": 30, "won": 12, "drawn": 6, "lost": 12, "gf": 43, "ga": 43, "gd": 0}, {"week": 30, "team": "Bournemouth", "position": 10, "points": 41, "played": 30, "won": 9, "drawn": 14, "lost": 7, "gf": 44, "ga": 46, "gd": -2}, {"week": 30, "team": "Fulham", "position": 11, "points": 41, "played": 30, "won": 12, "drawn": 5, "lost": 13, "gf": 40, "ga": 43, "gd": -3}, {"week": 30, "team": "Brighton", "position": 12, "points": 40, "played": 30, "won": 10, "drawn": 10, "lost": 10, "gf": 39, "ga": 36, "gd": 3}, {"week": 30, "team": "Sunderland", "position": 13, "points": 40, "played": 30, "won": 10, "drawn": 10, "lost": 10, "gf": 30, "ga": 35, "gd": -5}, {"week": 30, "team": "Crystal Palace", "position": 14, "points": 39, "played": 30, "won": 10, "drawn": 9, "lost": 11, "gf": 33, "ga": 35, "gd": -2}, {"week": 30, "team": "Leeds United", "position": 15, "points": 32, "played": 30, "won": 7, "drawn": 11, "lost": 12, "gf": 37, "ga": 48, "gd": -11}, {"week": 30, "team": "Tottenham Hotspur", "position": 16, "points": 30, "played": 30, "won": 7, "drawn": 9, "lost": 14, "gf": 40, "ga": 47, "gd": -7}, {"week": 30, "team": "Nottingham Forest", "position": 17, "points": 29, "played": 30, "won": 7, "drawn": 8, "lost": 15, "gf": 28, "ga": 43, "gd": -15}, {"week": 30, "team": "West Ham United", "position": 18, "points": 29, "played": 30, "won": 7, "drawn": 8, "lost": 15, "gf": 36, "ga": 55, "gd": -19}, {"week": 30, "team": "Burnley", "position": 19, "points": 20, "played": 30, "won": 4, "drawn": 8, "lost": 18, "gf": 32, "ga": 58, "gd": -26}, {"week": 30, "team": "Wolves", "position": 20, "points": 16, "played": 30, "won": 3, "drawn": 7, "lost": 20, "gf": 22, "ga": 52, "gd": -30}, {"week": 31, "team": "Arsenal", "position": 1, "points": 70, "played": 31, "won": 21, "drawn": 7, "lost": 3, "gf": 61, "ga": 22, "gd": 39}, {"week": 31, "team": "Manchester City", "position": 2, "points": 64, "played": 31, "won": 19, "drawn": 7, "lost": 5, "gf": 63, "ga": 28, "gd": 35}, {"week": 31, "team": "Manchester Utd", "position": 3, "points": 55, "played": 31, "won": 15, "drawn": 10, "lost": 6, "gf": 56, "ga": 43, "gd": 13}, {"week": 31, "team": "Aston Villa", "position": 4, "points": 54, "played": 31, "won": 16, "drawn": 6, "lost": 9, "gf": 42, "ga": 37, "gd": 5}, {"week": 31, "team": "Liverpool", "position": 5, "points": 49, "played": 31, "won": 14, "drawn": 7, "lost": 10, "gf": 50, "ga": 42, "gd": 8}, {"week": 31, "team": "Chelsea", "position": 6, "points": 48, "played": 31, "won": 13, "drawn": 9, "lost": 9, "gf": 53, "ga": 38, "gd": 15}, {"week": 31, "team": "Brentford", "position": 7, "points": 46, "played": 31, "won": 13, "drawn": 7, "lost": 11, "gf": 46, "ga": 42, "gd": 4}, {"week": 31, "team": "Everton", "position": 8, "points": 46, "played": 31, "won": 13, "drawn": 7, "lost": 11, "gf": 37, "ga": 35, "gd": 2}, {"week": 31, "team": "Fulham", "position": 9, "points": 44, "played": 31, "won": 13, "drawn": 5, "lost": 13, "gf": 43, "ga": 44, "gd": -1}, {"week": 31, "team": "Brighton", "position": 10, "points": 43, "played": 31, "won": 11, "drawn": 10, "lost": 10, "gf": 41, "ga": 37, "gd": 4}, {"week": 31, "team": "Sunderland", "position": 11, "points": 43, "played": 31, "won": 11, "drawn": 10, "lost": 10, "gf": 32, "ga": 36, "gd": -4}, {"week": 31, "team": "Newcastle United", "position": 12, "points": 42, "played": 31, "won": 12, "drawn": 6, "lost": 13, "gf": 44, "ga": 45, "gd": -1}, {"week": 31, "team": "Bournemouth", "position": 13, "points": 42, "played": 31, "won": 9, "drawn": 15, "lost": 7, "gf": 46, "ga": 48, "gd": -2}, {"week": 31, "team": "Crystal Palace", "position": 14, "points": 39, "played": 31, "won": 10, "drawn": 9, "lost": 12, "gf": 33, "ga": 38, "gd": -5}, {"week": 31, "team": "Leeds United", "position": 15, "points": 33, "played": 31, "won": 7, "drawn": 12, "lost": 12, "gf": 37, "ga": 48, "gd": -11}, {"week": 31, "team": "Nottingham Forest", "position": 16, "points": 32, "played": 31, "won": 8, "drawn": 8, "lost": 15, "gf": 31, "ga": 43, "gd": -12}, {"week": 31, "team": "Tottenham Hotspur", "position": 17, "points": 30, "played": 31, "won": 7, "drawn": 9, "lost": 15, "gf": 40, "ga": 50, "gd": -10}, {"week": 31, "team": "West Ham United", "position": 18, "points": 29, "played": 31, "won": 7, "drawn": 8, "lost": 16, "gf": 36, "ga": 57, "gd": -21}, {"week": 31, "team": "Burnley", "position": 19, "points": 20, "played": 31, "won": 4, "drawn": 8, "lost": 19, "gf": 33, "ga": 61, "gd": -28}, {"week": 31, "team": "Wolves", "position": 20, "points": 17, "played": 31, "won": 3, "drawn": 8, "lost": 20, "gf": 24, "ga": 54, "gd": -30}, {"week": 32, "team": "Arsenal", "position": 1, "points": 70, "played": 32, "won": 21, "drawn": 7, "lost": 4, "gf": 62, "ga": 24, "gd": 38}, {"week": 32, "team": "Manchester City", "position": 2, "points": 67, "played": 32, "won": 20, "drawn": 7, "lost": 5, "gf": 66, "ga": 28, "gd": 38}, {"week": 32, "team": "Manchester Utd", "position": 3, "points": 55, "played": 32, "won": 15, "drawn": 10, "lost": 7, "gf": 57, "ga": 45, "gd": 12}, {"week": 32, "team": "Aston Villa", "position": 4, "points": 55, "played": 32, "won": 16, "drawn": 7, "lost": 9, "gf": 43, "ga": 38, "gd": 5}, {"week": 32, "team": "Liverpool", "position": 5, "points": 52, "played": 32, "won": 15, "drawn": 7, "lost": 10, "gf": 52, "ga": 42, "gd": 10}, {"week": 32, "team": "Chelsea", "position": 6, "points": 48, "played": 32, "won": 13, "drawn": 9, "lost": 10, "gf": 53, "ga": 41, "gd": 12}, {"week": 32, "team": "Brentford", "position": 7, "points": 47, "played": 32, "won": 13, "drawn": 8, "lost": 11, "gf": 48, "ga": 44, "gd": 4}, {"week": 32, "team": "Everton", "position": 8, "points": 47, "played": 32, "won": 13, "drawn": 8, "lost": 11, "gf": 39, "ga": 37, "gd": 2}, {"week": 32, "team": "Brighton", "position": 9, "points": 46, "played": 32, "won": 12, "drawn": 10, "lost": 10, "gf": 43, "ga": 37, "gd": 6}, {"week": 32, "team": "Sunderland", "position": 10, "points": 46, "played": 32, "won": 12, "drawn": 10, "lost": 10, "gf": 33, "ga": 36, "gd": -3}, {"week": 32, "team": "Bournemouth", "position": 11, "points": 45, "played": 32, "won": 10, "drawn": 15, "lost": 7, "gf": 48, "ga": 49, "gd": -1}, {"week": 32, "team": "Fulham", "position": 12, "points": 44, "played": 32, "won": 13, "drawn": 5, "lost": 14, "gf": 43, "ga": 46, "gd": -3}, {"week": 32, "team": "Newcastle United", "position": 13, "points": 42, "played": 32, "won": 12, "drawn": 6, "lost": 14, "gf": 45, "ga": 47, "gd": -2}, {"week": 32, "team": "Crystal Palace", "position": 14, "points": 42, "played": 32, "won": 11, "drawn": 9, "lost": 12, "gf": 35, "ga": 39, "gd": -4}, {"week": 32, "team": "Leeds United", "position": 15, "points": 36, "played": 32, "won": 8, "drawn": 12, "lost": 12, "gf": 39, "ga": 49, "gd": -10}, {"week": 32, "team": "Nottingham Forest", "position": 16, "points": 33, "played": 32, "won": 8, "drawn": 9, "lost": 15, "gf": 32, "ga": 44, "gd": -12}, {"week": 32, "team": "West Ham United", "position": 17, "points": 32, "played": 32, "won": 8, "drawn": 8, "lost": 16, "gf": 40, "ga": 57, "gd": -17}, {"week": 32, "team": "Tottenham Hotspur", "position": 18, "points": 30, "played": 32, "won": 7, "drawn": 9, "lost": 16, "gf": 40, "ga": 51, "gd": -11}, {"week": 32, "team": "Burnley", "position": 19, "points": 20, "played": 32, "won": 4, "drawn": 8, "lost": 20, "gf": 33, "ga": 63, "gd": -30}, {"week": 32, "team": "Wolves", "position": 20, "points": 17, "played": 32, "won": 3, "drawn": 8, "lost": 21, "gf": 24, "ga": 58, "gd": -34}, {"week": 33, "team": "Manchester City", "position": 1, "points": 70, "played": 33, "won": 21, "drawn": 7, "lost": 5, "gf": 68, "ga": 29, "gd": 39}, {"week": 33, "team": "Arsenal", "position": 2, "points": 70, "played": 33, "won": 21, "drawn": 7, "lost": 5, "gf": 63, "ga": 26, "gd": 37}, {"week": 33, "team": "Manchester Utd", "position": 3, "points": 58, "played": 33, "won": 16, "drawn": 10, "lost": 7, "gf": 58, "ga": 45, "gd": 13}, {"week": 33, "team": "Aston Villa", "position": 4, "points": 58, "played": 33, "won": 17, "drawn": 7, "lost": 9, "gf": 47, "ga": 41, "gd": 6}, {"week": 33, "team": "Liverpool", "position": 5, "points": 55, "played": 33, "won": 16, "drawn": 7, "lost": 10, "gf": 54, "ga": 43, "gd": 11}, {"week": 33, "team": "Chelsea", "position": 6, "points": 48, "played": 33, "won": 13, "drawn": 9, "lost": 11, "gf": 53, "ga": 42, "gd": 11}, {"week": 33, "team": "Brentford", "position": 7, "points": 48, "played": 33, "won": 13, "drawn": 9, "lost": 11, "gf": 48, "ga": 44, "gd": 4}, {"week": 33, "team": "Bournemouth", "position": 8, "points": 48, "played": 33, "won": 11, "drawn": 15, "lost": 7, "gf": 50, "ga": 50, "gd": 0}, {"week": 33, "team": "Brighton", "position": 9, "points": 47, "played": 33, "won": 12, "drawn": 11, "lost": 10, "gf": 45, "ga": 39, "gd": 6}, {"week": 33, "team": "Everton", "position": 10, "points": 47, "played": 33, "won": 13, "drawn": 8, "lost": 12, "gf": 40, "ga": 39, "gd": 1}, {"week": 33, "team": "Sunderland", "position": 11, "points": 46, "played": 33, "won": 12, "drawn": 10, "lost": 11, "gf": 36, "ga": 40, "gd": -4}, {"week": 33, "team": "Fulham", "position": 12, "points": 45, "played": 33, "won": 13, "drawn": 6, "lost": 14, "gf": 43, "ga": 46, "gd": -3}, {"week": 33, "team": "Crystal Palace", "position": 13, "points": 43, "played": 33, "won": 11, "drawn": 10, "lost": 12, "gf": 35, "ga": 39, "gd": -4}, {"week": 33, "team": "Newcastle United", "position": 14, "points": 42, "played": 33, "won": 12, "drawn": 6, "lost": 15, "gf": 46, "ga": 49, "gd": -3}, {"week": 33, "team": "Leeds United", "position": 15, "points": 39, "played": 33, "won": 9, "drawn": 12, "lost": 12, "gf": 42, "ga": 49, "gd": -7}, {"week": 33, "team": "Nottingham Forest", "position": 16, "points": 36, "played": 33, "won": 9, "drawn": 9, "lost": 15, "gf": 36, "ga": 45, "gd": -9}, {"week": 33, "team": "West Ham United", "position": 17, "points": 33, "played": 33, "won": 8, "drawn": 9, "lost": 16, "gf": 40, "ga": 57, "gd": -17}, {"week": 33, "team": "Tottenham Hotspur", "position": 18, "points": 31, "played": 33, "won": 7, "drawn": 10, "lost": 16, "gf": 42, "ga": 53, "gd": -11}, {"week": 33, "team": "Burnley", "position": 19, "points": 20, "played": 33, "won": 4, "drawn": 8, "lost": 21, "gf": 34, "ga": 67, "gd": -33}, {"week": 33, "team": "Wolves", "position": 20, "points": 17, "played": 33, "won": 3, "drawn": 8, "lost": 22, "gf": 24, "ga": 61, "gd": -37}, {"week": 34, "team": "Manchester City", "position": 1, "points": 73, "played": 34, "won": 22, "drawn": 7, "lost": 5, "gf": 69, "ga": 29, "gd": 40}, {"week": 34, "team": "Arsenal", "position": 2, "points": 73, "played": 34, "won": 22, "drawn": 7, "lost": 5, "gf": 64, "ga": 26, "gd": 38}, {"week": 34, "team": "Manchester Utd", "position": 3, "points": 61, "played": 34, "won": 17, "drawn": 10, "lost": 7, "gf": 60, "ga": 46, "gd": 14}, {"week": 34, "team": "Liverpool", "position": 4, "points": 58, "played": 34, "won": 17, "drawn": 7, "lost": 10, "gf": 57, "ga": 44, "gd": 13}, {"week": 34, "team": "Aston Villa", "position": 5, "points": 58, "played": 34, "won": 17, "drawn": 7, "lost": 10, "gf": 47, "ga": 42, "gd": 5}, {"week": 34, "team": "Brighton", "position": 6, "points": 50, "played": 34, "won": 13, "drawn": 11, "lost": 10, "gf": 48, "ga": 39, "gd": 9}, {"week": 34, "team": "Bournemouth", "position": 7, "points": 49, "played": 34, "won": 11, "drawn": 16, "lost": 7, "gf": 52, "ga": 52, "gd": 0}, {"week": 34, "team": "Chelsea", "position": 8, "points": 48, "played": 34, "won": 13, "drawn": 9, "lost": 12, "gf": 53, "ga": 45, "gd": 8}, {"week": 34, "team": "Brentford", "position": 9, "points": 48, "played": 34, "won": 13, "drawn": 9, "lost": 12, "gf": 49, "ga": 46, "gd": 3}, {"week": 34, "team": "Fulham", "position": 10, "points": 48, "played": 34, "won": 14, "drawn": 6, "lost": 14, "gf": 44, "ga": 46, "gd": -2}, {"week": 34, "team": "Everton", "position": 11, "points": 47, "played": 34, "won": 13, "drawn": 8, "lost": 13, "gf": 41, "ga": 41, "gd": 0}, {"week": 34, "team": "Sunderland", "position": 12, "points": 46, "played": 34, "won": 12, "drawn": 10, "lost": 12, "gf": 36, "ga": 45, "gd": -9}, {"week": 34, "team": "Crystal Palace", "position": 13, "points": 43, "played": 34, "won": 11, "drawn": 10, "lost": 13, "gf": 36, "ga": 42, "gd": -6}, {"week": 34, "team": "Newcastle United", "position": 14, "points": 42, "played": 34, "won": 12, "drawn": 6, "lost": 16, "gf": 46, "ga": 50, "gd": -4}, {"week": 34, "team": "Leeds United", "position": 15, "points": 40, "played": 34, "won": 9, "drawn": 13, "lost": 12, "gf": 44, "ga": 51, "gd": -7}, {"week": 34, "team": "Nottingham Forest", "position": 16, "points": 39, "played": 34, "won": 10, "drawn": 9, "lost": 15, "gf": 41, "ga": 45, "gd": -4}, {"week": 34, "team": "West Ham United", "position": 17, "points": 36, "played": 34, "won": 9, "drawn": 9, "lost": 16, "gf": 42, "ga": 58, "gd": -16}, {"week": 34, "team": "Tottenham Hotspur", "position": 18, "points": 34, "played": 34, "won": 8, "drawn": 10, "lost": 16, "gf": 43, "ga": 53, "gd": -10}, {"week": 34, "team": "Burnley", "position": 19, "points": 20, "played": 34, "won": 4, "drawn": 8, "lost": 22, "gf": 34, "ga": 68, "gd": -34}, {"week": 34, "team": "Wolves", "position": 20, "points": 17, "played": 34, "won": 3, "drawn": 8, "lost": 23, "gf": 24, "ga": 62, "gd": -38}, {"week": 35, "team": "Arsenal", "position": 1, "points": 76, "played": 35, "won": 23, "drawn": 7, "lost": 5, "gf": 67, "ga": 26, "gd": 41}, {"week": 35, "team": "Manchester City", "position": 2, "points": 74, "played": 35, "won": 22, "drawn": 8, "lost": 5, "gf": 72, "ga": 32, "gd": 40}, {"week": 35, "team": "Manchester Utd", "position": 3, "points": 64, "played": 35, "won": 18, "drawn": 10, "lost": 7, "gf": 63, "ga": 48, "gd": 15}, {"week": 35, "team": "Liverpool", "position": 4, "points": 58, "played": 35, "won": 17, "drawn": 7, "lost": 11, "gf": 59, "ga": 47, "gd": 12}, {"week": 35, "team": "Aston Villa", "position": 5, "points": 58, "played": 35, "won": 17, "drawn": 7, "lost": 11, "gf": 48, "ga": 44, "gd": 4}, {"week": 35, "team": "Bournemouth", "position": 6, "points": 52, "played": 35, "won": 12, "drawn": 16, "lost": 7, "gf": 55, "ga": 52, "gd": 3}, {"week": 35, "team": "Brentford", "position": 7, "points": 51, "played": 35, "won": 14, "drawn": 9, "lost": 12, "gf": 52, "ga": 46, "gd": 6}, {"week": 35, "team": "Brighton", "position": 8, "points": 50, "played": 35, "won": 13, "drawn": 11, "lost": 11, "gf": 49, "ga": 42, "gd": 7}, {"week": 35, "team": "Chelsea", "position": 9, "points": 48, "played": 35, "won": 13, "drawn": 9, "lost": 13, "gf": 54, "ga": 48, "gd": 6}, {"week": 35, "team": "Everton", "position": 10, "points": 48, "played": 35, "won": 13, "drawn": 9, "lost": 13, "gf": 44, "ga": 44, "gd": 0}, {"week": 35, "team": "Fulham", "position": 11, "points": 48, "played": 35, "won": 14, "drawn": 6, "lost": 15, "gf": 44, "ga": 49, "gd": -5}, {"week": 35, "team": "Sunderland", "position": 12, "points": 47, "played": 35, "won": 12, "drawn": 11, "lost": 12, "gf": 37, "ga": 46, "gd": -9}, {"week": 35, "team": "Newcastle United", "position": 13, "points": 45, "played": 35, "won": 13, "drawn": 6, "lost": 16, "gf": 49, "ga": 51, "gd": -2}, {"week": 35, "team": "Leeds United", "position": 14, "points": 43, "played": 35, "won": 10, "drawn": 13, "lost": 12, "gf": 47, "ga": 52, "gd": -5}, {"week": 35, "team": "Crystal Palace", "position": 15, "points": 43, "played": 35, "won": 11, "drawn": 10, "lost": 14, "gf": 36, "ga": 45, "gd": -9}, {"week": 35, "team": "Nottingham Forest", "position": 16, "points": 42, "played": 35, "won": 11, "drawn": 9, "lost": 15, "gf": 44, "ga": 46, "gd": -2}, {"week": 35, "team": "Tottenham Hotspur", "position": 17, "points": 37, "played": 35, "won": 9, "drawn": 10, "lost": 16, "gf": 45, "ga": 54, "gd": -9}, {"week": 35, "team": "West Ham United", "position": 18, "points": 36, "played": 35, "won": 9, "drawn": 9, "lost": 17, "gf": 42, "ga": 61, "gd": -19}, {"week": 35, "team": "Burnley", "position": 19, "points": 20, "played": 35, "won": 4, "drawn": 8, "lost": 23, "gf": 35, "ga": 71, "gd": -36}, {"week": 35, "team": "Wolves", "position": 20, "points": 18, "played": 35, "won": 3, "drawn": 9, "lost": 23, "gf": 25, "ga": 63, "gd": -38}, {"week": 36, "team": "Arsenal", "position": 1, "points": 79, "played": 36, "won": 24, "drawn": 7, "lost": 5, "gf": 68, "ga": 26, "gd": 42}, {"week": 36, "team": "Manchester City", "position": 2, "points": 77, "played": 36, "won": 23, "drawn": 8, "lost": 5, "gf": 75, "ga": 32, "gd": 43}, {"week": 36, "team": "Manchester Utd", "position": 3, "points": 65, "played": 36, "won": 18, "drawn": 11, "lost": 7, "gf": 63, "ga": 48, "gd": 15}, {"week": 36, "team": "Liverpool", "position": 4, "points": 59, "played": 36, "won": 17, "drawn": 8, "lost": 11, "gf": 60, "ga": 48, "gd": 12}, {"week": 36, "team": "Aston Villa", "position": 5, "points": 59, "played": 36, "won": 17, "drawn": 8, "lost": 11, "gf": 50, "ga": 46, "gd": 4}, {"week": 36, "team": "Bournemouth", "position": 6, "points": 55, "played": 36, "won": 13, "drawn": 16, "lost": 7, "gf": 56, "ga": 52, "gd": 4}, {"week": 36, "team": "Brighton", "position": 7, "points": 53, "played": 36, "won": 14, "drawn": 11, "lost": 11, "gf": 52, "ga": 42, "gd": 10}, {"week": 36, "team": "Brentford", "position": 8, "points": 51, "played": 36, "won": 14, "drawn": 9, "lost": 13, "gf": 52, "ga": 49, "gd": 3}, {"week": 36, "team": "Chelsea", "position": 9, "points": 49, "played": 36, "won": 13, "drawn": 10, "lost": 13, "gf": 55, "ga": 49, "gd": 6}, {"week": 36, "team": "Everton", "position": 10, "points": 49, "played": 36, "won": 13, "drawn": 10, "lost": 13, "gf": 46, "ga": 46, "gd": 0}, {"week": 36, "team": "Fulham", "position": 11, "points": 48, "played": 36, "won": 14, "drawn": 6, "lost": 16, "gf": 44, "ga": 50, "gd": -6}, {"week": 36, "team": "Sunderland", "position": 12, "points": 48, "played": 36, "won": 12, "drawn": 12, "lost": 12, "gf": 37, "ga": 46, "gd": -9}, {"week": 36, "team": "Newcastle United", "position": 13, "points": 46, "played": 36, "won": 13, "drawn": 7, "lost": 16, "gf": 50, "ga": 52, "gd": -2}, {"week": 36, "team": "Leeds United", "position": 14, "points": 44, "played": 36, "won": 10, "drawn": 14, "lost": 12, "gf": 48, "ga": 53, "gd": -5}, {"week": 36, "team": "Crystal Palace", "position": 15, "points": 44, "played": 36, "won": 11, "drawn": 11, "lost": 14, "gf": 38, "ga": 47, "gd": -9}, {"week": 36, "team": "Nottingham Forest", "position": 16, "points": 43, "played": 36, "won": 11, "drawn": 10, "lost": 15, "gf": 45, "ga": 47, "gd": -2}, {"week": 36, "team": "Tottenham Hotspur", "position": 17, "points": 38, "played": 36, "won": 9, "drawn": 11, "lost": 16, "gf": 46, "ga": 55, "gd": -9}, {"week": 36, "team": "West Ham United", "position": 18, "points": 36, "played": 36, "won": 9, "drawn": 9, "lost": 18, "gf": 42, "ga": 62, "gd": -20}, {"week": 36, "team": "Burnley", "position": 19, "points": 21, "played": 36, "won": 4, "drawn": 9, "lost": 23, "gf": 37, "ga": 73, "gd": -36}, {"week": 36, "team": "Wolves", "position": 20, "points": 18, "played": 36, "won": 3, "drawn": 9, "lost": 24, "gf": 25, "ga": 66, "gd": -41}, {"week": 37, "team": "Arsenal", "position": 1, "points": 82, "played": 37, "won": 25, "drawn": 7, "lost": 5, "gf": 69, "ga": 26, "gd": 43}, {"week": 37, "team": "Manchester City", "position": 2, "points": 78, "played": 37, "won": 23, "drawn": 9, "lost": 5, "gf": 76, "ga": 33, "gd": 43}, {"week": 37, "team": "Manchester Utd", "position": 3, "points": 68, "played": 37, "won": 19, "drawn": 11, "lost": 7, "gf": 66, "ga": 50, "gd": 16}, {"week": 37, "team": "Aston Villa", "position": 4, "points": 62, "played": 37, "won": 18, "drawn": 8, "lost": 11, "gf": 54, "ga": 48, "gd": 6}, {"week": 37, "team": "Liverpool", "position": 5, "points": 59, "played": 37, "won": 17, "drawn": 8, "lost": 12, "gf": 62, "ga": 52, "gd": 10}, {"week": 37, "team": "Bournemouth", "position": 6, "points": 56, "played": 37, "won": 13, "drawn": 17, "lost": 7, "gf": 57, "ga": 53, "gd": 4}, {"week": 37, "team": "Brighton", "position": 7, "points": 53, "played": 37, "won": 14, "drawn": 11, "lost": 12, "gf": 52, "ga": 43, "gd": 9}, {"week": 37, "team": "Chelsea", "position": 8, "points": 52, "played": 37, "won": 14, "drawn": 10, "lost": 13, "gf": 57, "ga": 50, "gd": 7}, {"week": 37, "team": "Brentford", "position": 9, "points": 52, "played": 37, "won": 14, "drawn": 10, "lost": 13, "gf": 54, "ga": 51, "gd": 3}, {"week": 37, "team": "Sunderland", "position": 10, "points": 51, "played": 37, "won": 13, "drawn": 12, "lost": 12, "gf": 40, "ga": 47, "gd": -7}, {"week": 37, "team": "Newcastle United", "position": 11, "points": 49, "played": 37, "won": 14, "drawn": 7, "lost": 16, "gf": 53, "ga": 53, "gd": 0}, {"week": 37, "team": "Everton", "position": 12, "points": 49, "played": 37, "won": 13, "drawn": 10, "lost": 14, "gf": 47, "ga": 49, "gd": -2}, {"week": 37, "team": "Fulham", "position": 13, "points": 49, "played": 37, "won": 14, "drawn": 7, "lost": 16, "gf": 45, "ga": 51, "gd": -6}, {"week": 37, "team": "Leeds United", "position": 14, "points": 47, "played": 37, "won": 11, "drawn": 14, "lost": 12, "gf": 49, "ga": 53, "gd": -4}, {"week": 37, "team": "Crystal Palace", "position": 15, "points": 45, "played": 37, "won": 11, "drawn": 12, "lost": 14, "gf": 40, "ga": 49, "gd": -9}, {"week": 37, "team": "Nottingham Forest", "position": 16, "points": 43, "played": 37, "won": 11, "drawn": 10, "lost": 16, "gf": 47, "ga": 50, "gd": -3}, {"week": 37, "team": "Tottenham Hotspur", "position": 17, "points": 38, "played": 37, "won": 9, "drawn": 11, "lost": 17, "gf": 47, "ga": 57, "gd": -10}, {"week": 37, "team": "West Ham United", "position": 18, "points": 36, "played": 37, "won": 9, "drawn": 9, "lost": 19, "gf": 43, "ga": 65, "gd": -22}, {"week": 37, "team": "Burnley", "position": 19, "points": 21, "played": 37, "won": 4, "drawn": 9, "lost": 24, "gf": 37, "ga": 74, "gd": -37}, {"week": 37, "team": "Wolves", "position": 20, "points": 19, "played": 37, "won": 3, "drawn": 10, "lost": 24, "gf": 26, "ga": 67, "gd": -41}, {"week": 38, "team": "Arsenal", "position": 1, "points": 85, "played": 38, "won": 26, "drawn": 7, "lost": 5, "gf": 71, "ga": 27, "gd": 44}, {"week": 38, "team": "Manchester City", "position": 2, "points": 78, "played": 38, "won": 23, "drawn": 9, "lost": 6, "gf": 77, "ga": 35, "gd": 42}, {"week": 38, "team": "Manchester Utd", "position": 3, "points": 71, "played": 38, "won": 20, "drawn": 11, "lost": 7, "gf": 69, "ga": 50, "gd": 19}, {"week": 38, "team": "Aston Villa", "position": 4, "points": 65, "played": 38, "won": 19, "drawn": 8, "lost": 11, "gf": 56, "ga": 49, "gd": 7}, {"week": 38, "team": "Liverpool", "position": 5, "points": 60, "played": 38, "won": 17, "drawn": 9, "lost": 12, "gf": 63, "ga": 53, "gd": 10}, {"week": 38, "team": "Bournemouth", "position": 6, "points": 57, "played": 38, "won": 13, "drawn": 18, "lost": 7, "gf": 58, "ga": 54, "gd": 4}, {"week": 38, "team": "Sunderland", "position": 7, "points": 54, "played": 38, "won": 14, "drawn": 12, "lost": 12, "gf": 42, "ga": 48, "gd": -6}, {"week": 38, "team": "Brighton", "position": 8, "points": 53, "played": 38, "won": 14, "drawn": 11, "lost": 13, "gf": 52, "ga": 46, "gd": 6}, {"week": 38, "team": "Brentford", "position": 9, "points": 53, "played": 38, "won": 14, "drawn": 11, "lost": 13, "gf": 55, "ga": 52, "gd": 3}, {"week": 38, "team": "Chelsea", "position": 10, "points": 52, "played": 38, "won": 14, "drawn": 10, "lost": 14, "gf": 58, "ga": 52, "gd": 6}, {"week": 38, "team": "Fulham", "position": 11, "points": 52, "played": 38, "won": 15, "drawn": 7, "lost": 16, "gf": 47, "ga": 51, "gd": -4}, {"week": 38, "team": "Newcastle United", "position": 12, "points": 49, "played": 38, "won": 14, "drawn": 7, "lost": 17, "gf": 53, "ga": 55, "gd": -2}, {"week": 38, "team": "Everton", "position": 13, "points": 49, "played": 38, "won": 13, "drawn": 10, "lost": 15, "gf": 47, "ga": 50, "gd": -3}, {"week": 38, "team": "Leeds United", "position": 14, "points": 47, "played": 38, "won": 11, "drawn": 14, "lost": 13, "gf": 49, "ga": 56, "gd": -7}, {"week": 38, "team": "Crystal Palace", "position": 15, "points": 45, "played": 38, "won": 11, "drawn": 12, "lost": 15, "gf": 41, "ga": 51, "gd": -10}, {"week": 38, "team": "Nottingham Forest", "position": 16, "points": 44, "played": 38, "won": 11, "drawn": 11, "lost": 16, "gf": 48, "ga": 51, "gd": -3}, {"week": 38, "team": "Tottenham Hotspur", "position": 17, "points": 41, "played": 38, "won": 10, "drawn": 11, "lost": 17, "gf": 48, "ga": 57, "gd": -9}, {"week": 38, "team": "West Ham United", "position": 18, "points": 39, "played": 38, "won": 10, "drawn": 9, "lost": 19, "gf": 46, "ga": 65, "gd": -19}, {"week": 38, "team": "Burnley", "position": 19, "points": 22, "played": 38, "won": 4, "drawn": 10, "lost": 24, "gf": 38, "ga": 75, "gd": -37}, {"week": 38, "team": "Wolves", "position": 20, "points": 20, "played": 38, "won": 3, "drawn": 11, "lost": 24, "gf": 27, "ga": 68, "gd": -41}];
+
+// ── colour palette ──────────────────────────────────────────────────
+const TEAM_COLORS = {
+  "Arsenal":            "#ef0107",
+  "Aston Villa":        "#7b003c",
+  "Bournemouth":        "#da291c",
+  "Brentford":          "#e30613",
+  "Brighton":           "#0057b8",
+  "Burnley":            "#6c1d45",
+  "Chelsea":            "#034694",
+  "Crystal Palace":     "#c4122e",
+  "Everton":            "#003399",
+  "Fulham":             "#cc0000",
+  "Leeds United":       "#ffcd00",
+  "Liverpool":          "#c8102e",
+  "Manchester City":    "#6cabdd",
+  "Manchester Utd":     "#da291c",
+  "Newcastle United":   "#241f20",
+  "Nottingham Forest":  "#dd0000",
+  "Sunderland":         "#eb172b",
+  "Tottenham Hotspur":  "#ffffff",
+  "West Ham United":    "#7a263a",
+  "Wolves":             "#fdb913",
+};
+
+// Distinguish same-ish reds with override brightness
+const COLOR_OVERRIDE = {
+  "Arsenal":            "#ff2020",
+  "Liverpool":          "#d42b56",
+  "Manchester Utd":     "#e8682d",
+  "Crystal Palace":     "#b5179e",
+  "Burnley":            "#a855f7",
+  "West Ham United":    "#f59e0b",
+  "Nottingham Forest":  "#10b981",
+  "Sunderland":         "#06b6d4",
+  "Newcastle United":   "#94a3b8",
+  "Fulham":             "#f97316",
+  "Leeds United":       "#eab308",
+  "Brighton":           "#3b82f6",
+  "Everton":            "#6366f1",
+  "Chelsea":            "#0ea5e9",
+  "Aston Villa":        "#ec4899",
+  "Tottenham Hotspur":  "#e2e8f0",
+  "Brentford":          "#ef4444",
+  "Bournemouth":        "#14b8a6",
+  "Wolves":             "#fbbf24",
+  "Manchester City":    "#7dd3fc",
+};
+
+const teams = [...new Set(RAW.map(d => d.team))];
+const maxWeek = d3.max(RAW, d => d.week);
+
+// Index data
+const byTeamWeek = {};
+RAW.forEach(d => {
+  if (!byTeamWeek[d.team]) byTeamWeek[d.team] = {};
+  byTeamWeek[d.team][d.week] = d;
+});
+
+// Get final positions for end labels
+const finalPositions = {};
+teams.forEach(t => {
+  const fw = byTeamWeek[t][maxWeek];
+  if (fw) finalPositions[t] = fw.position;
+});
+const top6Final = teams.filter(t => finalPositions[t] <= 5).map(t => t);
+const bottom3Final = teams.filter(t => finalPositions[t] >= 18).map(t => t);
+
+let currentWeek = maxWeek;
+let highlightedTeams = null; // null = all
+let hoveredTeam = null;
+
+// ── layout ──────────────────────────────────────────────────────────
+const margin = { top: 20, right: 130, bottom: 40, left: 46 };
+
+function draw() {
+  const container = document.getElementById('chart-container');
+  const W = container.clientWidth;
+  const H = Math.max(500, Math.min(window.innerHeight * 0.72, 700));
+
+  const svg = d3.select('#chart')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('height', H);
+
+  svg.selectAll('*').remove();
+
+  const width = W - margin.left - margin.right;
+  const height = H - margin.top - margin.bottom;
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScale = d3.scaleLinear().domain([1, currentWeek]).range([0, width]);
+  const yScale = d3.scaleLinear().domain([1, 20]).range([0, height]);
+
+  // ── zone bands ──────────────────────────────────────────────────
+  const zones = [
+    { y1: 0.5, y2: 5.5, color: '#ffd700', label: 'CHAMPIONS LEAGUE' },
+    { y1: 5.5, y2: 7.5, color: '#3b9eff', label: 'EUROPA' },
+    { y1: 17.5, y2: 20.5, color: '#ff3b3b', label: 'RELEGATION' },
+  ];
+
+  zones.forEach(z => {
+    g.append('rect')
+      .attr('x', 0)
+      .attr('y', yScale(z.y1))
+      .attr('width', width)
+      .attr('height', yScale(z.y2) - yScale(z.y1))
+      .attr('fill', z.color)
+      .attr('opacity', 0.05);
+    g.append('line')
+      .attr('x1', 0).attr('x2', width)
+      .attr('y1', yScale(z.y2)).attr('y2', yScale(z.y2))
+      .attr('stroke', z.color).attr('stroke-width', 0.5).attr('opacity', 0.3)
+      .attr('stroke-dasharray', '4,3');
+  });
+
+  // ── grid lines ──────────────────────────────────────────────────
+  for (let pos = 1; pos <= 20; pos++) {
+    g.append('line')
+      .attr('x1', 0).attr('x2', width)
+      .attr('y1', yScale(pos)).attr('y2', yScale(pos))
+      .attr('stroke', 'rgba(26, 26, 26, 0.12)').attr('stroke-width', 0.5);
+  }
+
+  // Vertical week lines
+  const tickWeeks = currentWeek <= 10 ? d3.range(1, currentWeek + 1) :
+    [1, 5, 10, 15, 20, 25, 30, 35, 38].filter(w => w <= currentWeek);
+
+  tickWeeks.forEach(w => {
+    g.append('line')
+      .attr('x1', xScale(w)).attr('x2', xScale(w))
+      .attr('y1', 0).attr('y2', height)
+      .attr('stroke', 'rgba(26, 26, 26, 0.12)').attr('stroke-width', 0.5);
+  });
+
+  // ── axes ──────────────────────────────────────────────────────────
+  // Y axis (positions)
+  for (let pos = 1; pos <= 20; pos++) {
+    g.append('text')
+      .attr('x', -10).attr('y', yScale(pos))
+      .attr('text-anchor', 'end').attr('dominant-baseline', 'middle')
+      .attr('fill', pos <= 5 ? '#9a7800' : pos >= 18 ? '#bd1f1f' : '#646464')
+      .attr('font-size', 10)
+      .attr('font-family', 'Bricolage Grotesque, sans-serif')
+      .text(pos);
+  }
+
+  // X axis (weeks)
+  tickWeeks.forEach(w => {
+    g.append('text')
+      .attr('x', xScale(w)).attr('y', height + 22)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#646464').attr('font-size', 10)
+      .attr('font-family', 'Bricolage Grotesque, sans-serif')
+      .text(`GW${w}`);
+  });
+
+  g.append('text')
+    .attr('x', width / 2).attr('y', height + 38)
+    .attr('text-anchor', 'middle')
+    .attr('fill', '#646464').attr('font-size', 10)
+    .attr('font-family', 'Bricolage Grotesque, sans-serif')
+    .attr('letter-spacing', '0.1em')
+    .text('GAMEWEEK');
+
+  // ── lines ─────────────────────────────────────────────────────────
+  const lineGen = d3.line()
+    .x(d => xScale(d.week))
+    .y(d => yScale(d.position))
+    .curve(d3.curveCatmullRom.alpha(0.5));
+
+  const tooltip = document.getElementById('tooltip');
+
+  teams.forEach(team => {
+    const weeks = d3.range(1, currentWeek + 1).filter(w => byTeamWeek[team][w]);
+    const data = weeks.map(w => byTeamWeek[team][w]);
+    if (!data.length) return;
+
+    const color = COLOR_OVERRIDE[team] || '#888';
+    const isDimmed = highlightedTeams && !highlightedTeams.includes(team);
+    const isHovered = hoveredTeam === team;
+
+    const lineClass = `team-line${isDimmed ? ' dimmed' : ''}${isHovered ? ' highlighted' : ''}`;
+
+    g.append('path')
+      .datum(data)
+      .attr('class', lineClass)
+      .attr('d', lineGen)
+      .attr('stroke', color)
+      .attr('opacity', isDimmed ? 0.06 : isHovered ? 1 : 0.75)
+      .attr('stroke-width', isHovered ? 3.5 : 2)
+      .on('mouseenter', function(event) {
+        hoveredTeam = team;
+        draw();
+        showTooltip(event, team, currentWeek);
+      })
+      .on('mouseleave', function() {
+        hoveredTeam = null;
+        draw();
+        tooltip.style.opacity = 0;
+      });
+  });
+
+  // ── current week dots ─────────────────────────────────────────────
+  teams.forEach(team => {
+    const d = byTeamWeek[team][currentWeek];
+    if (!d) return;
+    const color = COLOR_OVERRIDE[team] || '#888';
+    const isDimmed = highlightedTeams && !highlightedTeams.includes(team);
+    const isHovered = hoveredTeam === team;
+
+    g.append('circle')
+      .attr('class', `pl-dot${isDimmed ? ' dimmed' : ''}`)
+      .attr('cx', xScale(currentWeek))
+      .attr('cy', yScale(d.position))
+      .attr('r', isHovered ? 5 : 3.5)
+      .attr('fill', color)
+      .attr('opacity', isDimmed ? 0.06 : 1)
+      .on('mouseenter', function(event) {
+        hoveredTeam = team;
+        draw();
+        showTooltip(event, team, currentWeek);
+      })
+      .on('mouseleave', function() {
+        hoveredTeam = null;
+        draw();
+        tooltip.style.opacity = 0;
+      });
+  });
+
+  // ── end labels ────────────────────────────────────────────────────
+  teams.forEach(team => {
+    const d = byTeamWeek[team][currentWeek];
+    if (!d) return;
+    const color = COLOR_OVERRIDE[team] || '#888';
+    const isDimmed = highlightedTeams && !highlightedTeams.includes(team);
+    const isHovered = hoveredTeam === team;
+
+    // Shorten long names
+    const shortName = {
+      "Manchester City": "Man City",
+      "Manchester Utd": "Man Utd",
+      "Tottenham Hotspur": "Spurs",
+      "Newcastle United": "Newcastle",
+      "Nottingham Forest": "Nott'm Forest",
+      "West Ham United": "West Ham",
+      "Crystal Palace": "C. Palace",
+      "Aston Villa": "Aston Villa",
+    }[team] || team;
+
+    g.append('text')
+      .attr('class', `label-end${isDimmed ? ' dimmed' : ''}`)
+      .attr('x', xScale(currentWeek) + 10)
+      .attr('y', yScale(d.position))
+      .attr('fill', isHovered ? color : (isDimmed ? '#a8a8a8' : color))
+      .attr('opacity', isDimmed ? 0.06 : isHovered ? 1 : 0.9)
+      .attr('font-size', isHovered ? 12 : 10.5)
+      .attr('font-weight', isHovered ? 700 : 400)
+      .attr('font-family', 'Bricolage Grotesque, sans-serif')
+      .attr('dominant-baseline', 'middle')
+      .text(shortName)
+      .on('mouseenter', function(event) {
+        hoveredTeam = team;
+        draw();
+        showTooltip(event, team, currentWeek);
+      })
+      .on('mouseleave', function() {
+        hoveredTeam = null;
+        draw();
+        tooltip.style.opacity = 0;
+      });
+  });
+}
+
+function showTooltip(event, team, week) {
+  const d = byTeamWeek[team][week];
+  if (!d) return;
+  const tooltip = document.getElementById('tooltip');
+  const gdStr = d.gd > 0 ? `+${d.gd}` : String(d.gd);
+  tooltip.innerHTML = `
+    <div class="tt-team" style="color:${COLOR_OVERRIDE[team] || '#fff'}">${team}</div>
+    <div class="tt-row"><span>Position</span><span>${d.position}</span></div>
+    <div class="tt-row"><span>Points</span><span>${d.points}</span></div>
+    <div class="tt-row"><span>Record</span><span>${d.won}W ${d.drawn}D ${d.lost}L</span></div>
+    <div class="tt-row"><span>Goals</span><span>${d.gf}–${d.ga} (${gdStr})</span></div>
+  `;
+  tooltip.style.opacity = 1;
+  tooltip.style.left = (event.clientX + 16) + 'px';
+  tooltip.style.top = (event.clientY - 10) + 'px';
+}
+
+// ── slider ────────────────────────────────────────────────────────
+document.getElementById('weekSlider').addEventListener('input', function() {
+  currentWeek = +this.value;
+  document.getElementById('weekLabel').textContent = `GW ${currentWeek}`;
+  draw();
+});
+
+// ── filter buttons ────────────────────────────────────────────────
+function highlightGroup(group) {
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  if (group === 'all') {
+    highlightedTeams = null;
+    document.getElementById('btn-all').classList.add('active');
+  } else if (group === 'top6') {
+    highlightedTeams = teams.filter(t => {
+      const fw = byTeamWeek[t][maxWeek];
+      return fw && fw.position <= 5;
+    });
+    document.getElementById('btn-top6').classList.add('active');
+  } else if (group === 'bottom3') {
+    highlightedTeams = teams.filter(t => {
+      const fw = byTeamWeek[t][maxWeek];
+      return fw && fw.position >= 18;
+    });
+    document.getElementById('btn-bottom3').classList.add('active');
+  }
+  draw();
+}
+
+document.getElementById('btn-all').classList.add('active');
+document.getElementById('btn-all').addEventListener('click', () => highlightGroup('all'));
+document.getElementById('btn-top6').addEventListener('click', () => highlightGroup('top6'));
+document.getElementById('btn-bottom3').addEventListener('click', () => highlightGroup('bottom3'));
+
+window.addEventListener('resize', draw);
+draw();
+</script>
+</body>
+</html>

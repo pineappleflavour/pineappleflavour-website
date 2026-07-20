@@ -7,6 +7,7 @@
     --accent-blue: #1e4bd6;
     --accent-orange: #ff4d00;
     --accent-yellow: #ffc72c;
+    --premier-league-blue: #1adef4;
     --experimental-yellow: #fcef97;
 
     /* Typography */
@@ -322,6 +323,79 @@ body {
     background:
         linear-gradient(90deg, transparent 0 6%, rgba(255, 255, 255, 0.4) 6% 8%, transparent 8% 16%, rgba(255, 255, 255, 0.7) 16% 18%, transparent 18% 26%, rgba(255, 255, 255, 0.3) 26% 28%, transparent 28% 100%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02));
+}
+
+.project-preview--premier-league {
+    background: #1adef4;
+    color: var(--text-primary);
+}
+
+.premier-preview {
+    position: absolute;
+    inset: 0;
+    padding: 22px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 18px;
+}
+
+.premier-preview-title {
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 0.9;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+}
+
+.premier-preview-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(26, 26, 26, 0.62);
+    text-transform: uppercase;
+}
+
+.premier-preview-chart {
+    position: relative;
+    border: 1px solid rgba(26, 26, 26, 0.16);
+    border-radius: 8px;
+    background:
+        repeating-linear-gradient(to bottom, transparent 0 15%, rgba(26, 26, 26, 0.08) 15% calc(15% + 1px), transparent calc(15% + 1px) 20%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.28));
+    overflow: hidden;
+}
+
+.premier-preview-chart::before,
+.premier-preview-chart::after {
+    content: "";
+    position: absolute;
+    inset: 28px 18px 24px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.premier-preview-chart::before {
+    background-image:
+        linear-gradient(155deg, transparent 0 12%, #1e4bd6 12% 13.5%, transparent 13.5% 29%, #ff4d00 29% 30.5%, transparent 30.5% 47%, #00a651 47% 48.5%, transparent 48.5% 100%);
+}
+
+.premier-preview-chart::after {
+    inset: 46px 24px 38px;
+    background-image:
+        linear-gradient(24deg, transparent 0 18%, #ef0107 18% 20%, transparent 20% 44%, #0ea5e9 44% 46%, transparent 46% 74%, #6f451f 74% 76%, transparent 76% 100%);
+}
+
+.premier-preview-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.premier-preview-pills span {
+    border: 1px solid rgba(26, 26, 26, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .project-card:hover .project-image img {
