@@ -1,4 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const heroTitle = document.querySelector('.page-home .main-title');
+    if (heroTitle) {
+        const originalTitleHtml = heroTitle.innerHTML;
+        const scrambleChars = '01#/*<>{}_-+';
+        const animatedChars = [];
+
+        heroTitle.innerHTML = '';
+
+        const appendAnimatedText = (text) => {
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.dataset.final = char;
+                span.style.display = 'inline-block';
+                span.style.whiteSpace = 'pre';
+                span.style.opacity = '0';
+                span.style.transform = 'translateY(24px)';
+                span.style.transition = 'opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+                heroTitle.appendChild(span);
+                animatedChars.push(span);
+            });
+        };
+
+        Array.from(new DOMParser().parseFromString(originalTitleHtml, 'text/html').body.childNodes).forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                appendAnimatedText(node.textContent);
+            } else if (node.nodeName === 'BR') {
+                heroTitle.appendChild(document.createElement('br'));
+            }
+        });
+
+        animatedChars.forEach((span, index) => {
+            const finalChar = span.dataset.final;
+            const delay = index * 28;
+
+            setTimeout(() => {
+                span.style.opacity = '1';
+                span.style.transform = 'translateY(0)';
+
+                if (finalChar.trim() === '') return;
+
+                let ticks = 0;
+                const maxTicks = 5 + Math.floor(Math.random() * 4);
+                const interval = setInterval(() => {
+                    ticks++;
+                    span.textContent = ticks >= maxTicks
+                        ? finalChar
+                        : scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+
+                    if (ticks >= maxTicks) {
+                        clearInterval(interval);
+                    }
+                }, 28);
+            }, delay);
+        });
+
+        const totalAnimationTime = animatedChars.length * 28 + 900;
+        setTimeout(() => {
+            heroTitle.innerHTML = originalTitleHtml;
+        }, totalAnimationTime);
+    }
+
     // Smooth scroll reveal for project cards
     const cards = document.querySelectorAll('.project-card, .work-item');
     
