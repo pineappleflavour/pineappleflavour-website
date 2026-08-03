@@ -50,8 +50,6 @@ body {
 .nav {
     display: flex;
     gap: 4px;
-    position: relative;
-    isolation: isolate;
 }
 
 .nav-pill {
@@ -66,8 +64,6 @@ body {
     border-radius: 30px !important;
     background-color: transparent;
     color: var(--text-primary);
-    position: relative;
-    z-index: 2;
 }
 
 .nav-pill.active {
@@ -102,58 +98,6 @@ body {
 .nav-pill:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Gooey navigation transition — adapted for the site's static HTML navigation. */
-.gooey-nav-effect {
-    position: absolute;
-    pointer-events: none;
-    border-radius: 999px;
-}
-
-.gooey-nav-effect--pill {
-    z-index: 1;
-    background: var(--gooey-color, var(--nav-active-bg));
-    opacity: 0;
-    transform: scale(.7);
-}
-
-.gooey-nav-effect--pill.active {
-    animation: gooey-pill-pop 360ms cubic-bezier(.23, 1, .32, 1) both;
-}
-
-.gooey-particle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 14px;
-    height: 14px;
-    margin: -7px;
-    border-radius: 50%;
-    background: var(--gooey-color, var(--nav-active-bg));
-    opacity: 0;
-    animation: gooey-particle var(--gooey-duration, 620ms) ease-out both;
-    animation-delay: var(--gooey-delay, 0ms);
-}
-
-@keyframes gooey-pill-pop {
-    0% { opacity: 0; transform: scale(.72); }
-    55% { opacity: 1; transform: scale(1.06); }
-    100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes gooey-particle {
-    0% { opacity: 0; transform: translate(0, 0) scale(0); }
-    18% { opacity: 1; }
-    72% { opacity: .9; transform: translate(var(--gooey-x), var(--gooey-y)) scale(1); }
-    100% { opacity: 0; transform: translate(calc(var(--gooey-x) * .55), calc(var(--gooey-y) * .55)) scale(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .gooey-nav-effect,
-    .gooey-particle {
-        animation: none !important;
-    }
 }
 
 /* Hero Section */
