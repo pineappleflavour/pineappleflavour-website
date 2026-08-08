@@ -1,7 +1,9 @@
 :root {
-    /* Color Palette */
+    /* Color Palette (Light Mode) */
     --bg-color: #fcfcfc;
     --text-primary: #1a1a1a;
+    --text-secondary: #444;
+    --text-muted: #666;
     --accent-brown: #8b572a;
     --accent-green: #00a651;
     --accent-blue: #1e4bd6;
@@ -9,6 +11,20 @@
     --accent-yellow: #ffc72c;
     --premier-league-blue: #1adef4;
     --experimental-yellow: #fcef97;
+    
+    /* Card & Component Surfaces */
+    --card-bg: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.05);
+    --header-bg: rgba(255, 255, 255, 0.1);
+    --header-shadow: rgba(0, 0, 0, 0.1);
+
+    /* Navigation Active Pill Variables (Default Light Mode values) */
+    --home-active-bg: #008743;
+    --home-active-text: #fff;
+    --projects-active-bg: #a8cdf7;
+    --projects-active-text: #0d2b52;
+    --about-active-bg: #6f451f;
+    --about-active-text: #fff;
 
     /* Typography */
     --font-main: 'Bricolage Grotesque', sans-serif;
@@ -18,6 +34,35 @@
     /* Navigation */
     --nav-active-bg: var(--accent-yellow);
     --nav-active-text: #000;
+}
+
+html.dark-mode {
+    /* Color Palette (Dark Mode) */
+    --bg-color: #0b0c10;
+    --text-primary: #f0f0f5;
+    --text-secondary: #bbb;
+    --text-muted: #a0a0a0;
+    --accent-brown: #cf9b6f;
+    --accent-green: #2ecc71;
+    --accent-blue: #4fa3ff;
+    --accent-orange: #ff7d47;
+    --accent-yellow: #ffdf6d;
+    --premier-league-blue: #00bcd4;
+    --experimental-yellow: #22251a;
+    
+    /* Card & Component Surfaces */
+    --card-bg: #14151a;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --header-bg: rgba(15, 15, 20, 0.4);
+    --header-shadow: rgba(0, 0, 0, 0.4);
+
+    /* Navigation Active Pill Variables (Dark Mode values) */
+    --home-active-bg: #2ecc71;
+    --home-active-text: #000;
+    --projects-active-bg: #4fa3ff;
+    --projects-active-text: #0d2b52;
+    --about-active-bg: #cf9b6f;
+    --about-active-text: #000;
 }
 
 * {
@@ -32,6 +77,7 @@ body {
     font-family: var(--font-main);
     overflow-x: hidden;
     line-height: 1.5;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Header & Nav */
@@ -41,10 +87,11 @@ body {
     left: 20px;
     z-index: 1000;
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--header-bg);
     border-radius: 40px;
     padding: 4px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px var(--header-shadow);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .nav {
@@ -81,18 +128,18 @@ body {
 }
 
 .page-home {
-    --nav-active-bg: #008743;
-    --nav-active-text: #fff;
+    --nav-active-bg: var(--home-active-bg);
+    --nav-active-text: var(--home-active-text);
 }
 
 .page-projects {
-    --nav-active-bg: #a8cdf7;
-    --nav-active-text: #0d2b52;
+    --nav-active-bg: var(--projects-active-bg);
+    --nav-active-text: var(--projects-active-text);
 }
 
 .page-about {
-    --nav-active-bg: #6f451f;
-    --nav-active-text: #fff;
+    --nav-active-bg: var(--about-active-bg);
+    --nav-active-text: var(--about-active-text);
 }
 
 .nav-pill:hover {
@@ -106,9 +153,10 @@ body {
 }
 
 .hero-content {
-    background-color: #fff;
+    background-color: var(--card-bg);
     padding: 80px 40px;
     border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
 .title-row {
@@ -192,15 +240,17 @@ body {
 }
 
 .project-card {
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--card-border);
     cursor: pointer;
     overflow: hidden;
+    transition: border-color 0.3s ease;
 }
 
 .project-image {
     aspect-ratio: 4/3;
-    background-color: #ddd;
+    background-color: var(--card-border);
     overflow: hidden;
+    transition: background-color 0.3s ease;
 }
 
 .project-image img {
@@ -414,7 +464,7 @@ body {
 .project-id {
     font-family: var(--font-mono);
     font-size: 12px;
-    color: #666;
+    color: var(--text-muted);
 }
 
 /* Footer */
@@ -475,13 +525,15 @@ body {
 /* Projects List (Work Page) */
 .projects-list {
     padding: 0;
-    background-color: #fff;
+    background-color: var(--card-bg);
+    transition: background-color 0.3s ease;
 }
 
 .work-item {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--card-border);
+    transition: border-color 0.3s ease;
 }
 
 .work-content {
@@ -494,8 +546,9 @@ body {
 .work-meta {
     font-family: var(--font-mono);
     font-size: 12px;
-    color: #999;
+    color: var(--text-muted);
     margin-bottom: 40px;
+    transition: color 0.3s ease;
 }
 
 .work-item-title {
@@ -507,9 +560,10 @@ body {
 
 .work-item-desc {
     font-size: 18px;
-    color: #444;
+    color: var(--text-secondary);
     max-width: 400px;
     margin-bottom: 40px;
+    transition: color 0.3s ease;
 }
 
 .view-link {
@@ -519,9 +573,10 @@ body {
 }
 
 .work-visual {
-    background-color: #f0f0f0;
+    background-color: var(--card-border);
     overflow: hidden;
     aspect-ratio: 1/1;
+    transition: background-color 0.3s ease;
 }
 
 .work-visual img {
@@ -569,4 +624,222 @@ body {
         gap: 20px;
         text-align: center;
     }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Theme Toggle & Dark Mode Transitions
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Smooth transitions for global elements */
+.hero-info-box,
+.projects-grid,
+.footer,
+.nav-pill {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Theme Toggle Pill Button */
+.theme-toggle {
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    padding: 10px 18px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* SVG Animating Elements */
+.theme-toggle-icon {
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.theme-toggle-icon .sun-circle,
+.theme-toggle-icon .sun-line {
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: center;
+    transform: rotate(-90deg);
+}
+
+.theme-toggle-icon .moon-path {
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: center;
+    transform: rotate(0deg);
+}
+
+/* Toggle transformations in Dark Mode */
+html.dark-mode .theme-toggle-icon {
+    transform: rotate(360deg);
+}
+
+html.dark-mode .theme-toggle-icon .sun-circle,
+html.dark-mode .theme-toggle-icon .sun-line {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+html.dark-mode .theme-toggle-icon .moon-path {
+    opacity: 0;
+    transform: rotate(90deg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Page-Specific Dark Mode Overrides
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Home Page */
+html.dark-mode .rotating-pineapple {
+    filter: drop-shadow(0px 10px 20px rgba(255, 255, 255, 0.08));
+}
+
+/* About Page */
+html.dark-mode .hero-about {
+    background-color: #24160c !important; /* Deep dark brown for high-contrast white text */
+    transition: background-color 0.3s ease;
+}
+
+html.dark-mode .about-grid {
+    background-color: #121318 !important;
+    transition: background-color 0.3s ease;
+}
+
+html.dark-mode .experience-section {
+    background-color: #181920 !important;
+    transition: background-color 0.3s ease;
+}
+
+html.dark-mode .exp-row {
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.15) !important;
+}
+
+html.dark-mode .exp-row td {
+    color: var(--text-primary) !important;
+}
+
+html.dark-mode .exp-row td:last-child {
+    color: var(--text-muted) !important;
+}
+
+html.dark-mode .list-section h3 {
+    color: var(--text-muted) !important;
+}
+
+/* Projects / Work List Page */
+html.dark-mode .work-hero {
+    background-color: #131d2e !important;
+    transition: background-color 0.3s ease;
+}
+
+html.dark-mode .work-title {
+    color: var(--accent-orange) !important;
+}
+
+html.dark-mode .projects-list {
+    background-color: var(--bg-color) !important; /* Fix light-gray contrast bug */
+    transition: background-color 0.3s ease;
+}
+
+/* Project Detail Pages (PSO, Skin Lesion, Wine Quality) */
+html.dark-mode .p-hero {
+    background-color: #0b2d18 !important; /* Deep forest green for high-contrast white text */
+    transition: background-color 0.3s ease;
+}
+
+/* D3 Premier League Page Specifics */
+html.dark-mode .pl-hero {
+    background: #072f38 !important; /* Deep navy/cyan for high-contrast text */
+    transition: background-color 0.3s ease;
+}
+
+html.dark-mode .pl-viz-section {
+    background: #17181e !important;
+    transition: background-color 0.3s ease;
+}
+
+html.dark-mode .btn {
+    background: #1e2029 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: var(--text-primary) !important;
+}
+
+html.dark-mode .btn:hover {
+    border-color: var(--pl-accent) !important;
+    color: var(--pl-accent) !important;
+}
+
+html.dark-mode .btn.active {
+    background: var(--pl-accent) !important;
+    color: #000 !important;
+    border-color: var(--pl-accent) !important;
+}
+
+/* Keep text on Premier League project card readable on bright blue/cyan background */
+.project-preview--premier-league {
+    color: #1a1a1a !important;
+}
+
+.project-preview--premier-league .premier-preview-meta {
+    color: rgba(26, 26, 26, 0.75) !important;
+}
+
+.project-preview--premier-league .premier-preview-pills span {
+    color: #1a1a1a !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* D3 Visualizations Overrides via CSS */
+html.dark-mode svg text {
+    fill: var(--pl-ink) !important;
+}
+
+html.dark-mode svg .domain,
+html.dark-mode svg .tick line {
+    stroke: var(--pl-border) !important;
+}
+
+html.dark-mode svg .tick text {
+    fill: var(--pl-muted) !important;
+}
+
+/* Grid lines inside D3 SVGs */
+html.dark-mode svg line[stroke="rgba(26, 26, 26, 0.12)"] {
+    stroke: var(--pl-border) !important;
+}
+
+html.dark-mode svg line[stroke="#ccc"] {
+    stroke: var(--pl-border) !important;
+}
+
+/* Custom styled rect/zones in D3 SVGs */
+html.dark-mode svg rect[fill="#ffd700"] {
+    fill: var(--accent-yellow) !important;
+}
+
+html.dark-mode svg rect[fill="#3b9eff"] {
+    fill: var(--accent-blue) !important;
+}
+
+html.dark-mode svg rect[fill="#ff3b3b"] {
+    fill: var(--accent-orange) !important;
+}
+
+html.dark-mode svg line[stroke="#ffd700"] {
+    stroke: var(--accent-yellow) !important;
+}
+
+html.dark-mode svg line[stroke="#3b9eff"] {
+    stroke: var(--accent-blue) !important;
+}
+
+html.dark-mode svg line[stroke="#ff3b3b"] {
+    stroke: var(--accent-orange) !important;
 }
