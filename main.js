@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Smooth scroll reveal for project cards
-    const cards = document.querySelectorAll('.project-card, .work-item');
+    const cards = document.querySelectorAll('.work-item');
     
     const revealOnScroll = () => {
         cards.forEach(card => {
@@ -147,4 +147,93 @@ document.addEventListener('DOMContentLoaded', () => {
             document.documentElement.classList.remove('dark-mode');
         }
     });
+
+    // Featured projects carousel (home page)
+    const carouselTrack = document.querySelector('.carousel-track');
+    if (carouselTrack) {
+        const cardEls = Array.from(carouselTrack.querySelectorAll('.carousel-card'));
+        const dotsWrap = document.querySelector('.carousel-dots');
+        const prevBtn = document.querySelector('.carousel-arrow--prev');
+        const nextBtn = document.querySelector('.carousel-arrow--next');
+        const viewport = document.querySelector('.carousel-viewport');
+        const total = cardEls.length;
+        let active = 0;
+        let autoplayTimer;
+
+        cardEls.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'carousel-dot';
+            dot.setAttribute('aria-label', `Go to project ${i + 1}`);
+            dot.addEventListener('click', () => goTo(i));
+            dotsWrap.appendChild(dot);
+        });
+        const dotEls = Array.from(dotsWrap.children);
+
+        function render() {
+            cardEls.forEach((card, i) => {
+                let offset = (i - active + total) % total;
+                if (offset > total / 2) offset -= total;
+
+                let position;
+                if (offset === 0) position = 'active';
+                else if (offset === 1) position = 'next';
+                else if (offset === -1) position = 'prev';
+                else if (offset > 0) position = 'hidden-next';
+                else position = 'hidden-prev';
+
+                card.dataset.position = position;
+            });
+            dotEls.forEach((dot, i) => dot.classList.toggle('is-active', i === active));
+        }
+
+        function goTo(index) {
+            active = ((index % total) + total) % total;
+            render();
+            restartAutoplay();
+        }
+
+        function startAutoplay() {
+            autoplayTimer = setInterval(() => goTo(active + 1), 6000);
+        }
+
+        function restartAutoplay() {
+            clearInterval(autoplayTimer);
+            startAutoplay();
+        }
+
+        prevBtn.addEventListener('click', () => goTo(active - 1));
+        nextBtn.addEventListener('click', () => goTo(active + 1));
+
+        cardEls.forEach((card, i) => {
+            card.addEventListener('click', (e) => {
+                if (card.dataset.position !== 'active') {
+                    e.preventDefault();
+                    goTo(i);
+                }
+            });
+        });
+
+        viewport.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') goTo(active - 1);
+            if (e.key === 'ArrowRight') goTo(active + 1);
+        });
+
+        viewport.addEventListener('mouseenter', () => clearInterval(autoplayTimer));
+        viewport.addEventListener('mouseleave', () => startAutoplay());
+
+        let touchStartX = 0;
+        viewport.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].clientX;
+        }, { passive: true });
+        viewport.addEventListener('touchend', (e) => {
+            const delta = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(delta) > 40) {
+                goTo(active + (delta < 0 ? 1 : -1));
+            }
+        }, { passive: true });
+
+        render();
+        startAutoplay();
+    }
 });
