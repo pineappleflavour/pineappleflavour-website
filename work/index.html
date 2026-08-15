@@ -43,74 +43,6 @@
         vertical-align: super;
         margin-left: 10px;
       }
-
-      .projects-list {
-        padding: 0;
-        background-color: #fff;
-      }
-
-      .work-item {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        border-bottom: 1px solid #eee;
-      }
-
-      .work-content {
-        padding: 80px 40px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      .work-meta {
-        font-family: var(--font-mono);
-        font-size: 12px;
-        color: #999;
-        margin-bottom: 40px;
-      }
-
-      .work-item-title {
-        font-size: 48px;
-        font-weight: 700;
-        margin-bottom: 24px;
-        line-height: 1.1;
-      }
-
-      .work-item-desc {
-        font-size: 18px;
-        color: #444;
-        max-width: 400px;
-        margin-bottom: 40px;
-      }
-
-      .view-link {
-        font-weight: 700;
-        color: var(--accent-blue);
-        text-decoration: none;
-      }
-
-      .work-visual {
-        background-color: #f0f0f0;
-        overflow: hidden;
-        aspect-ratio: 1/1;
-      }
-
-      .work-visual img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.8s ease;
-      }
-
-      .work-item:hover .work-visual img {
-        transform: scale(1.05);
-      }
-
-      @media (max-width: 900px) {
-        .work-item {
-          grid-template-columns: 1fr;
-        }
-      }
     </style>
   </head>
 
@@ -129,117 +61,196 @@
       </section>
 
       <section class="projects-list">
-        <div class="work-item">
-          <div class="work-content">
-            <div>
-              <div class="work-meta">PROJECT 01 / OPTIMISERS</div>
-              <h2 class="work-item-title">Particle Swarm Optimiser</h2>
-              <p class="work-item-desc">
+        <div class="project-filter-bar" role="group" aria-label="Filter projects by category">
+          <button type="button" class="filter-pill is-active" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-pill" data-filter="optimisation" aria-pressed="false">Optimisation</button>
+          <button type="button" class="filter-pill" data-filter="generative-ai" aria-pressed="false">Generative AI</button>
+          <button type="button" class="filter-pill" data-filter="machine-learning" aria-pressed="false">Machine Learning</button>
+          <button type="button" class="filter-pill" data-filter="data-viz" aria-pressed="false">Data Visualisation</button>
+          <button type="button" class="filter-pill" data-filter="data-analysis" aria-pressed="false">Exploratory Analysis</button>
+        </div>
+
+        <div class="project-grid">
+          <a
+            href="/pso/"
+            class="project-card"
+            data-category="optimisation"
+            style="--card-accent: var(--accent-green)"
+          >
+            <div
+              class="project-card-media"
+              style="background-image: url(&quot;/assets/swarm-optimisation-full.jpg&quot;)"
+            ></div>
+            <div class="project-card-overlay"></div>
+            <div class="project-card-top">
+              <span class="project-card-tag">Optimisation</span>
+              <span class="project-card-index">01</span>
+            </div>
+            <div class="project-card-body">
+              <h2 class="project-card-title">Particle Swarm Optimiser</h2>
+              <p class="project-card-desc">
                 At its core, swarm intelligence is about emergence: achieving
                 complex, "intelligent" group behavior using very simple
                 underlying rules.
               </p>
+              <span class="project-card-link">
+                View project
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
             </div>
-            <a href="/pso/" class="view-link">View project →</a>
-          </div>
-          <div class="work-visual">
-            <img
-              src="/assets/swarm-optimisation-full.jpg"
-              alt="Particle Swarm"
-            />
-          </div>
-        </div>
+          </a>
 
-        <div class="work-item">
-          <div class="work-visual">
-            <img src="/assets/abstractGEN.jpg" alt="AbstractGEN" />
-          </div>
-          <div class="work-content">
-            <div>
-              <div class="work-meta">PROJECT 02 / GENERATIVE</div>
-              <h2 class="work-item-title">AbstractGEN</h2>
-              <p class="work-item-desc">
+          <div
+            class="project-card is-disabled"
+            data-category="generative-ai"
+            style="--card-accent: var(--accent-blue)"
+            tabindex="0"
+          >
+            <div
+              class="project-card-media"
+              style="background-image: url(&quot;/assets/abstractGEN.jpg&quot;)"
+            ></div>
+            <div class="project-card-overlay"></div>
+            <div class="project-card-top">
+              <span class="project-card-tag">Generative AI</span>
+              <span class="project-card-index">02</span>
+            </div>
+            <div class="project-card-body">
+              <h2 class="project-card-title">AbstractGEN</h2>
+              <p class="project-card-desc">
                 Investigation and evaluation of the performance of large
                 language models for text summarization of scientific papers.
               </p>
+              <span class="project-card-link">Coming soon</span>
             </div>
-            <a href="#" class="view-link"> Coming soon... →</a>
           </div>
-        </div>
 
-        <div class="work-item">
-          <div class="work-content">
-            <div>
-              <div class="work-meta">PROJECT 03 / MACHINE LEARNING</div>
-              <h2 class="work-item-title">Skin Lesion Classification</h2>
-              <p class="work-item-desc">
+          <a
+            href="/skin-lesion/"
+            class="project-card"
+            data-category="machine-learning"
+            style="--card-accent: var(--accent-orange)"
+          >
+            <div
+              class="project-card-media"
+              style="background-image: url(&quot;/assets/skin_lesion1.jpeg&quot;)"
+            ></div>
+            <div class="project-card-overlay"></div>
+            <div class="project-card-top">
+              <span class="project-card-tag">Machine Learning</span>
+              <span class="project-card-index">03</span>
+            </div>
+            <div class="project-card-body">
+              <h2 class="project-card-title">Skin Lesion Classification</h2>
+              <p class="project-card-desc">
                 Investigation and evaluation of the performance of large
                 language models for text summarization of scientific papers.
               </p>
+              <span class="project-card-link">
+                View project
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
             </div>
-            <a href="/skin-lesion/" class="view-link">View project →</a>
-          </div>
-          <div class="work-visual">
-            <img src="/assets/skin_lesion1.jpeg" alt="Skin Lesion" />
-          </div>
-        </div>
+          </a>
 
-        <div class="work-item">
-          <div class="work-content">
-            <div>
-              <div class="work-meta">
-                PROJECT 04 / GLOBAL HEALTH DEMOGRAPHICS DASHBOARD EXPLORATION
-              </div>
-              <h2 class="work-item-title">Global Health Dashboard</h2>
-              <p class="work-item-desc">
-                Interactive D3js dashboard built for coursework, exploring how
-                demographic and public health indicators vary accross country
-                over time.
+          <a
+            href="/f21dv/"
+            class="project-card"
+            data-category="data-viz"
+            style="--card-accent: var(--accent-yellow)"
+          >
+            <div
+              class="project-card-media"
+              style="background-image: url(&quot;/assets/global_health.jpg&quot;)"
+            ></div>
+            <div class="project-card-overlay"></div>
+            <div class="project-card-top">
+              <span class="project-card-tag">Data Visualisation</span>
+              <span class="project-card-index">04</span>
+            </div>
+            <div class="project-card-body">
+              <h2 class="project-card-title">Global Health Dashboard</h2>
+              <p class="project-card-desc">
+                Interactive D3.js dashboard built for coursework, exploring
+                how demographic and public health indicators vary across
+                country over time.
               </p>
+              <span class="project-card-link">
+                View project
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
             </div>
-            <a href="/f21dv/" class="view-link">View project →</a>
-          </div>
-          <div class="work-visual">
-            <img src="/assets/global_health.jpg" alt="Global Health" />
-          </div>
-        </div>
+          </a>
 
-        <div class="work-item">
-          <div class="work-content">
-            <div>
-              <div class="work-meta">
-                PROJECT 05 / EXPLORATORY DATA ANALYSIS
-              </div>
-              <h2 class="work-item-title">Wine Quality Analysis</h2>
-              <p class="work-item-desc">
-                Exploratory Data Analysis of Wine Quality Datasets.
+          <a
+            href="/wine-quality/"
+            class="project-card"
+            data-category="data-analysis"
+            style="--card-accent: var(--accent-brown)"
+          >
+            <div
+              class="project-card-media"
+              style="background-image: url(&quot;/assets/winequality.png&quot;)"
+            ></div>
+            <div class="project-card-overlay"></div>
+            <div class="project-card-top">
+              <span class="project-card-tag">Exploratory Analysis</span>
+              <span class="project-card-index">05</span>
+            </div>
+            <div class="project-card-body">
+              <h2 class="project-card-title">Wine Quality Analysis</h2>
+              <p class="project-card-desc">
+                Exploratory data analysis of wine quality datasets.
               </p>
+              <span class="project-card-link">
+                View project
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
             </div>
-            <a href="/wine-quality/" class="view-link">View project →</a>
-          </div>
-          <div class="work-visual">
-            <img src="/assets/winequality.png" alt="Wine Quality" />
-          </div>
-        </div>
+          </a>
 
-        <div class="work-item">
-          <div class="work-content">
-            <div>
-              <div class="work-meta">PROJECT 06 / DATA VISUALISATION</div>
-              <h2 class="work-item-title">Premier League Season Journey</h2>
-              <p class="work-item-desc">
+          <a
+            href="/premier-league/"
+            class="project-card"
+            data-category="data-viz"
+            style="--card-accent: var(--premier-league-blue)"
+          >
+            <div
+              class="project-card-media"
+              style="background-image: url(&quot;/assets/arsenal.jpg&quot;)"
+            ></div>
+            <div class="project-card-overlay"></div>
+            <div class="project-card-top">
+              <span class="project-card-tag">Data Visualisation</span>
+              <span class="project-card-index">06</span>
+            </div>
+            <div class="project-card-body">
+              <h2 class="project-card-title">Premier League Season Journey</h2>
+              <p class="project-card-desc">
                 An interactive D3.js visualisation that tracks Premier League
                 table positions by gameweek across the 2025 to 2026 season.
               </p>
+              <span class="project-card-link">
+                View project
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
             </div>
-            <a href="/premier-league/" class="view-link">View project →</a>
-          </div>
-          <div class="work-visual">
-            <img
-              src="/assets/arsenal.jpg"
-              alt="Premier League Season Journey"
-            />
-          </div>
+          </a>
         </div>
       </section>
     </main>

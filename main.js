@@ -62,28 +62,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Smooth scroll reveal for project cards
-    const cards = document.querySelectorAll('.work-item');
-    
+    const cards = document.querySelectorAll('.project-card');
+
     const revealOnScroll = () => {
         cards.forEach(card => {
             const cardTop = card.getBoundingClientRect().top;
             const windowHeight = window.innerHeight;
             if (cardTop < windowHeight * 0.9) {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
+                card.classList.add('is-visible');
             }
         });
     };
 
-    // Initialize styles for scroll reveal
-    cards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'all 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
-    });
-
     window.addEventListener('scroll', revealOnScroll);
     revealOnScroll(); // Run once on load
+
+    // Project grid category filter (work page)
+    const filterBar = document.querySelector('.project-filter-bar');
+    if (filterBar) {
+        const pills = Array.from(filterBar.querySelectorAll('.filter-pill'));
+        const projectCards = Array.from(document.querySelectorAll('.project-card'));
+
+        filterBar.addEventListener('click', (e) => {
+            const pill = e.target.closest('.filter-pill');
+            if (!pill) return;
+
+            pills.forEach(p => {
+                p.classList.remove('is-active');
+                p.setAttribute('aria-pressed', 'false');
+            });
+            pill.classList.add('is-active');
+            pill.setAttribute('aria-pressed', 'true');
+
+            const category = pill.dataset.filter;
+            projectCards.forEach(card => {
+                const matches = category === 'all' || card.dataset.category === category;
+                card.classList.toggle('is-filtered-out', !matches);
+            });
+        });
+    }
 
     // Mouse movement interaction for the sun icon
     const sunIcon = document.querySelector('.sun-icon');
