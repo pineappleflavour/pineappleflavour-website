@@ -63,11 +63,28 @@
       <section class="projects-list">
         <div class="project-filter-bar" role="group" aria-label="Filter projects by category">
           <button type="button" class="filter-pill is-active" data-filter="all" aria-pressed="true">All</button>
-          <button type="button" class="filter-pill" data-filter="optimisation" aria-pressed="false">Optimisation</button>
-          <button type="button" class="filter-pill" data-filter="generative-ai" aria-pressed="false">Generative AI</button>
-          <button type="button" class="filter-pill" data-filter="machine-learning" aria-pressed="false">Machine Learning</button>
-          <button type="button" class="filter-pill" data-filter="data-viz" aria-pressed="false">Data Visualisation</button>
-          <button type="button" class="filter-pill" data-filter="data-analysis" aria-pressed="false">Exploratory Analysis</button>
+          <div class="filter-dropdown">
+            <button
+              type="button"
+              class="filter-dropdown-trigger"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-label="More categories"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="5" cy="12" r="2"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+                <circle cx="19" cy="12" r="2"></circle>
+              </svg>
+            </button>
+            <div class="filter-dropdown-menu" role="menu">
+              <button type="button" class="filter-dropdown-item" data-filter="optimisation" role="menuitem">Optimisation</button>
+              <button type="button" class="filter-dropdown-item" data-filter="generative-ai" role="menuitem">Generative AI</button>
+              <button type="button" class="filter-dropdown-item" data-filter="machine-learning" role="menuitem">Machine Learning</button>
+              <button type="button" class="filter-dropdown-item" data-filter="data-viz" role="menuitem">Data Visualisation</button>
+              <button type="button" class="filter-dropdown-item" data-filter="data-analysis" role="menuitem">Exploratory Analysis</button>
+            </div>
+          </div>
         </div>
 
         <div class="project-grid">

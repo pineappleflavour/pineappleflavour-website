@@ -49,6 +49,7 @@ html.dark-mode {
   --accent-yellow: #ffdf6d;
   --premier-league-blue: #00bcd4;
   --experimental-yellow: #22251a;
+  --accent-purple: #b960dd;
 
   /* Card & Component Surfaces */
   --card-bg: #14151a;
@@ -340,7 +341,12 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.15) 26%, transparent 44%),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.15) 26%,
+      transparent 44%
+    ),
     linear-gradient(0deg, var(--card-accent) 0%, transparent 48%);
 }
 
@@ -397,7 +403,9 @@ body {
   justify-content: center;
   cursor: pointer;
   z-index: 6;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .carousel-arrow svg {
@@ -751,9 +759,10 @@ body {
 /* Project Filter Bar */
 .project-filter-bar {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
   padding: 48px 40px 4px;
+  position: relative;
 }
 
 .filter-pill {
@@ -781,6 +790,99 @@ body {
   background: var(--text-primary);
   color: var(--bg-color);
   border-color: var(--text-primary);
+}
+
+/* Category dropdown (triple-dot trigger) */
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.filter-dropdown-trigger svg {
+  width: 18px;
+  height: 18px;
+}
+
+.filter-dropdown-trigger:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.filter-dropdown.is-open .filter-dropdown-trigger,
+.filter-dropdown.has-selection .filter-dropdown-trigger {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+}
+
+.filter-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 220px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s;
+}
+
+.filter-dropdown.is-open .filter-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.filter-dropdown-item {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-dropdown-item:hover {
+  background: var(--card-border);
+  color: var(--text-primary);
+}
+
+.filter-dropdown-item.is-active {
+  background: var(--text-primary);
+  color: var(--bg-color);
 }
 
 /* Project Grid */
@@ -966,6 +1068,11 @@ body {
     max-height: 120px;
     opacity: 1;
     margin-bottom: 16px;
+  }
+
+  .filter-dropdown-menu {
+    left: auto;
+    right: 0;
   }
 }
 

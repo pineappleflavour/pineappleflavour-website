@@ -81,24 +81,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterBar = document.querySelector('.project-filter-bar');
     if (filterBar) {
         const pills = Array.from(filterBar.querySelectorAll('.filter-pill'));
+        const dropdown = filterBar.querySelector('.filter-dropdown');
+        const dropdownTrigger = filterBar.querySelector('.filter-dropdown-trigger');
+        const dropdownItems = Array.from(filterBar.querySelectorAll('.filter-dropdown-item'));
+        const allControls = [...pills, ...dropdownItems];
         const projectCards = Array.from(document.querySelectorAll('.project-card'));
 
-        filterBar.addEventListener('click', (e) => {
-            const pill = e.target.closest('.filter-pill');
-            if (!pill) return;
+        const closeDropdown = () => {
+            if (!dropdown) return;
+            dropdown.classList.remove('is-open');
+            dropdownTrigger.setAttribute('aria-expanded', 'false');
+        };
 
-            pills.forEach(p => {
-                p.classList.remove('is-active');
-                p.setAttribute('aria-pressed', 'false');
+        const applyFilter = (category) => {
+            allControls.forEach(control => {
+                const isMatch = control.dataset.filter === category;
+                control.classList.toggle('is-active', isMatch);
+                if (control.classList.contains('filter-pill')) {
+                    control.setAttribute('aria-pressed', String(isMatch));
+                }
             });
-            pill.classList.add('is-active');
-            pill.setAttribute('aria-pressed', 'true');
 
-            const category = pill.dataset.filter;
+            if (dropdown) {
+                dropdown.classList.toggle('has-selection', category !== 'all');
+            }
+
             projectCards.forEach(card => {
                 const matches = category === 'all' || card.dataset.category === category;
                 card.classList.toggle('is-filtered-out', !matches);
             });
+        };
+
+        filterBar.addEventListener('click', (e) => {
+            if (dropdownTrigger && e.target.closest('.filter-dropdown-trigger')) {
+                const isOpen = dropdown.classList.toggle('is-open');
+                dropdownTrigger.setAttribute('aria-expanded', String(isOpen));
+                return;
+            }
+
+            const control = e.target.closest('.filter-pill, .filter-dropdown-item');
+            if (!control) return;
+
+            applyFilter(control.dataset.filter);
+            closeDropdown();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (dropdown && dropdown.classList.contains('is-open') && !dropdown.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeDropdown();
         });
     }
 
